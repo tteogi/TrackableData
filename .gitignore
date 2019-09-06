@@ -64,3 +64,4 @@ AppPackages/
 
 # No APK
 *.apk
+/.idea/
