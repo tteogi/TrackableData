@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\plugins\TrackableData.Protobuf\TrackableData.Protobuf.csproj" />
+    <ProjectReference Include="..\..\..\plugins\TrackableData.Core.Protobuf\TrackableData.Core.Protobuf.csproj" />
   </ItemGroup>
 
 </Project>

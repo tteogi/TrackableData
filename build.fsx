@@ -1,115 +1,145 @@
-﻿#I @"packages/FAKE/tools"
-#I @"packages/FAKE.BuildLib/lib/net451"
-#r "FakeLib.dll"
-#r "BuildLib.dll"
+﻿#r "paket:
+nuget Fake.Core.ReleaseNotes
+nuget Fake.Core.Xml
+nuget Fake.DotNet.Cli
+nuget Fake.DotNet.Paket
+nuget Fake.Tools.Git
+nuget Fake.Core.Process
+nuget Fake.IO.FileSystem
+nuget Fake.DotNet.MSBuild
+nuget Fake.DotNet.NuGet
+nuget Fake.Core.Target //"
+#load "./.fake/build.fsx/intellisense.fsx"
 
-open Fake
-open BuildLib
+open Fake.Core
+open Fake.IO
+open Fake.Core.TargetOperators
+open System
+open System.IO
+open Fake.DotNet
+open Fake.DotNet.NuGet
 
-let solution = 
-    initSolution 
-        "./TrackableData.sln" "Release"
-        [ // Core Libraries
-          { emptyProject with Name = "TrackableData"
-                              Folder = "./core/TrackableData" }
-          { emptyProject with Name = "TrackableData.Templates"
-                              Folder = "./core/CodeGenerator-Templates"
-                              Template = true
-                              Dependencies = [ ("TrackableData", "") ] }
-          // Plugin Libraries
-          { emptyProject with Name = "TrackableData.Json"
-                              Folder = "./plugins/TrackableData.Json"
-                              Dependencies = [ ("TrackableData", "");
-                                               ("Newtonsoft.Json", "") ] }
-          { emptyProject with Name = "TrackableData.MongoDB"
-                              Folder = "./plugins/TrackableData.MongoDB"
-                              Dependencies = [ ("TrackableData", "")
-                                               ("MongoDB.Bson", "")
-                                               ("MongoDB.Driver", "")
-                                               ("MongoDB.Driver.Core", "") ] }
-          { emptyProject with Name = "TrackableData.MsSql"
-                              Folder = "./plugins/TrackableData.MsSql"
-                              Dependencies = [ ("TrackableData", "")
-                                               ("TrackableData.Sql", "") ] }
-          { emptyProject with Name = "TrackableData.MySql"
-                              Folder = "./plugins/TrackableData.MySql"
-                              Dependencies = [ ("TrackableData", "")
-                                               ("TrackableData.Sql", "")
-                                               ("MySql.Data", "") ] }
-          { emptyProject with Name = "TrackableData.PostgreSql"
-                              Folder = "./plugins/TrackableData.PostgreSql"
-                              Dependencies = [ ("TrackableData", "")
-                                               ("TrackableData.Sql", "")
-                                               ("npgsql", "") ] }
-          { emptyProject with Name = "TrackableData.Protobuf"
-                              Folder = "./plugins/TrackableData.Protobuf"
-                              PackagePrerelease = "beta"
-                              Dependencies = [ ("TrackableData", "")
-                                               ("protobuf-net", "") ] }
-          { emptyProject with Name = "TrackableData.Redis"
-                              Folder = "./plugins/TrackableData.Redis"
-                              Dependencies = [ ("TrackableData", "")
-                                               ("StackExchange.Redis", "")
-                                               ("Newtonsoft.Json", "") ] }
-          { emptyProject with Name = "TrackableData.Sql"
-                              Folder = "./plugins/TrackableData.Sql"
-                              Dependencies = [ ("TrackableData", "") ] } ]
 
-Target "Clean" <| fun _ -> cleanBin
+let nugetApiKye = "oy2krlvnusssg3pxpbhqkgzxyxnureoetm5imuovixvtqq"
+let buildDir = "./build/"
+let testDir  = "./test/"
+let configuration = DotNet.BuildConfiguration.Release
 
-Target "AssemblyInfo" <| fun _ -> generateAssemblyInfo solution
 
-Target "Restore" <| fun _ -> restoreNugetPackages solution
+// Properties
+let summary = "Helper class for generating code concisely."
+let copyright = "Copyright © 2019 tteogi"
+let authors = ["TenY"]
+let owner = "TenY"
+let solutionFile = "CodeWriter"
+let nugetVersion = "1.0.0";
+let gitHome = "https://github.com/tteogi"
+let gitName = "TrackableData"
+let projectUrl = sprintf "%s/%s" gitHome gitName
+let licenceUrl = "https://raw.githubusercontent.com/tteogi/tteogi.github.io/master/MIT-LICENSE"
 
-Target "Build" <| fun _ -> buildSolution solution
+type ProjectObject = struct
+   val Name : string
+   val BasePath : string
+   val Tag : string
+   val Description : float
+end
 
-Target "Test" <| fun _ -> testSolution solution
+let ProjectObjects = [|
+|]
 
-Target "Cover" <| fun _ ->
-    coverSolutionWithParams 
-        (fun p -> { p with Filter = "+[TrackableData*]* -[*.Tests]*" })
-        solution
+Target.create "Pack" (fun _ ->
+    let pack basePath project description tag =
+        let projectPath = sprintf "%s/%s/%s.csproj" basePath project project
+        let args =
+            let defaultArgs = MSBuild.CliArguments.Create()
+            { defaultArgs with
+                      Properties = [
+                          "Title", project
+                          "PackageVersion", nugetVersion
+                          "Authors", (String.Join(" ", authors))
+                          "Owners", owner
+                          "PackageRequireLicenseAcceptance", "false"
+                          "Description", description
+                          "Summary", summary
+                          "Copyright", copyright
+                          "PackageTags", tag
+                          "PackageProjectUrl", projectUrl
+                          "PackageLicenseUrl", licenceUrl
+                      ] }
 
-Target "Coverity" <| fun _ -> coveritySolution solution "SaladLab/TrackableData"
+        DotNet.pack (fun p ->
+            { p with
+                  Configuration = configuration
+                  OutputPath = Some "./build"
+                  MSBuildParams = args
+              }) projectPath
 
-Target "PackNuget" <| fun _ -> createNugetPackages solution
+    pack "core" "CodeGenerator.Core"
+        """Visual Studio project template to generate codes for POCO and container of TrackableData For DotNet Core."""
+        "trackable data"
+    pack "core" "TrackableData.Core"
+        """POCO, list, dictionary, set and container which can track changes. These changes can be saved or rollbacked or replayed to another object For DotNet Core."""
+        "trackable data"
+    pack "plugins" "TrackableData.Core.Json"
+        """Json.NET converters for tracker classes of TrackableData for DotNet Core."""
+        "trackable data json"
+    pack "plugins" "TrackableData.Core.MongoDB"
+        """Object-document mapper between TrackableData and MongoDB for DotNet Core."""
+        "trackable data mongodb nosql odm"
+    pack "plugins" "TrackableData.Core.MsSql"
+        """Object-relational mapper between TrackableData and Microsoft SQL Server for DotNet Core."""
+        "trackable data sqlserver sql orm mssql"
+    pack "plugins" "TrackableData.Core.MySql"
+        """Object-relational mapper between TrackableData and MySQL for DotNet Core."""
+        "trackable data mysql sql orm"
+    pack "plugins" "TrackableData.Core.PostgreSql"
+        """Object-relational mapper between TrackableData and PostgreSQL for DotNet Core."""
+        "trackable data postgresql sql orm"
+    pack "plugins" "TrackableData.Core.Protobuf"
+        """Protobuf-net surrogates for tracker classes of TrackableData for DotNet Core."""
+        "trackable data protobuf"
+    pack "plugins" "TrackableData.Core.Redis"
+        """Object-document mapper between TrackableData and Redis for DotNet Core."""
+        "trackable data redis nosql odm"
+    pack "plugins" "TrackableData.Core.Sql"
+        """Object-relational mapper between TrackableData and common SQL for DotNet Core."""
+        "trackable data sql orm"
+)
 
-Target "PackUnity" <| fun _ ->
-    packUnityPackage "./core/UnityPackage/TrackableData.unitypackage.json"
 
-Target "Pack" <| fun _ -> ()
+// Targets
+Target.create "Clean" (fun _ ->
+  Shell.cleanDirs [buildDir; testDir]
+)
 
-Target "PublishNuget" <| fun _ -> publishNugetPackages solution
+Target.create "Default" (fun _ ->
+  Trace.trace "Hello World from FAKE"
+)
 
-Target "PublishUnity" <| fun _ -> ()
+Target.create "Push" (fun _ ->
+    let setNugetPushParams (defaults:NuGet.NuGetPushParams) =
+            { defaults with
+                Source = Some "https://api.nuget.org/v3/index.json"
+                ApiKey = Some nugetApiKye
 
-Target "Publish" <| fun _ -> ()
+             }
+    let setParams (defaults:DotNet.NuGetPushOptions) =
+            { defaults with
+                PushParams = setNugetPushParams defaults.PushParams
+             }
 
-Target "CI" <| fun _ -> ()
+    IO.Directory.EnumerateFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly)
+    |> Seq.iter (fun nupkg ->
+        DotNet.nugetPush setParams nupkg
+    )
+)
 
-Target "Help" <| fun _ -> 
-    showUsage solution (fun _ -> None)
+open Fake.Core.TargetOperators
+//"Clean"
+//  ==> "Pack"
+"Push"
+  ==> "Default"
 
-"Clean"
-  ==> "AssemblyInfo"
-  ==> "Restore"
-  ==> "Build"
-  ==> "Test"
-
-"Build" ==> "Cover"
-"Restore" ==> "Coverity"
-
-let isPublishOnly = getBuildParam "publishonly"
-
-"Build" ==> "PackNuget" =?> ("PublishNuget", isPublishOnly = "")
-"Build" ==> "PackUnity" =?> ("PublishUnity", isPublishOnly = "")
-"PackNuget" ==> "Pack"
-"PackUnity" ==> "Pack"
-"PublishNuget" ==> "Publish"
-"PublishUnity" ==> "Publish"
-
-"Test" ==> "CI"
-// "Cover" ==> "CI" // make run faster on appveyor to avoid timeout
-"Publish" ==> "CI"
-
-RunTargetOrDefault "Help"
+// start build
+Target.runOrDefault "Default"

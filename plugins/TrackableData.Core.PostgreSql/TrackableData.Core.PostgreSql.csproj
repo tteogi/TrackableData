@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
-    <ProjectReference Include="..\TrackableData.Sql\TrackableData.Sql.csproj" />
+    <ProjectReference Include="..\TrackableData.Core.Sql\TrackableData.Core.Sql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

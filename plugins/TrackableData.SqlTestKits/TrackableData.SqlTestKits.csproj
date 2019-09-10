@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -13,10 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\TrackableData\TrackableData.csproj">
-    </ProjectReference>
-    <ProjectReference Include="..\TrackableData.Sql\TrackableData.Sql.csproj">
-    </ProjectReference>
+    <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
+    <ProjectReference Include="..\TrackableData.Core.Sql\TrackableData.Core.Sql.csproj" />
     <ProjectReference Include="..\TrackableData.TestKits\TrackableData.TestKits.csproj">
     </ProjectReference>
   </ItemGroup>

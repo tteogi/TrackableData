@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData", "core\TrackableData\TrackableData.csproj", "{C2C3A8CA-62F9-4C5A-8B2B-5091E5A41C54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core", "core\TrackableData.Core\TrackableData.Core.csproj", "{C2C3A8CA-62F9-4C5A-8B2B-5091E5A41C54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4E8FE3E2-E85F-4503-8C2C-B2461553AE7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Json", "plugins\TrackableData.Json\TrackableData.Json.csproj", "{F4185A6A-B952-4EA5-9B23-5C7AF6AE7712}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.Json", "plugins\TrackableData.Core.Json\TrackableData.Core.Json.csproj", "{F4185A6A-B952-4EA5-9B23-5C7AF6AE7712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.MsSql", "plugins\TrackableData.MsSql\TrackableData.MsSql.csproj", "{505EDF72-41F9-499D-B213-9FC9B8932489}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.MsSql", "plugins\TrackableData.Core.MsSql\TrackableData.Core.MsSql.csproj", "{505EDF72-41F9-499D-B213-9FC9B8932489}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{C06A38EC-AF66-42FE-A5EE-A8C7B1AA1937}"
 EndProject
@@ -17,11 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		NOTE.md = NOTE.md
 		README.md = README.md
+		build.fsx = build.fsx
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator", "core\CodeGenerator\CodeGenerator.csproj", "{011E72B0-3E37-4652-ACB9-2CAC26665AFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core", "core\CodeGenerator.Core\CodeGenerator.Core.csproj", "{011E72B0-3E37-4652-ACB9-2CAC26665AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Protobuf", "plugins\TrackableData.Protobuf\TrackableData.Protobuf.csproj", "{182F783A-ED38-4245-89D1-20086C98A372}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.Protobuf", "plugins\TrackableData.Core.Protobuf\TrackableData.Core.Protobuf.csproj", "{182F783A-ED38-4245-89D1-20086C98A372}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basic", "samples\Basic\Basic.csproj", "{F7869CF6-D68E-4CE2-A627-8AA7B41D9A79}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -33,11 +34,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.Data", "samples\Unity
 		{011E72B0-3E37-4652-ACB9-2CAC26665AFD} = {011E72B0-3E37-4652-ACB9-2CAC26665AFD}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.MongoDB", "plugins\TrackableData.MongoDB\TrackableData.MongoDB.csproj", "{DB0AE3EA-11A6-466C-AD6F-652D64E5D6E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.MongoDB", "plugins\TrackableData.Core.MongoDB\TrackableData.Core.MongoDB.csproj", "{DB0AE3EA-11A6-466C-AD6F-652D64E5D6E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{9C429998-836D-4F36-8B4E-825B48B0E759}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.MySql", "plugins\TrackableData.MySql\TrackableData.MySql.csproj", "{4718BA4E-F43D-4FC8-9605-85CB84F67126}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.MySql", "plugins\TrackableData.Core.MySql\TrackableData.Core.MySql.csproj", "{4718BA4E-F43D-4FC8-9605-85CB84F67126}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.MySql.Tests", "plugins\TrackableData.MySql.Tests\TrackableData.MySql.Tests.csproj", "{6CFD2EC4-B29C-4D06-B2CB-13A5665D33D6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -45,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.MySql.Tests",
 		{601864B9-D8C2-4FD0-B844-70A0F865B67F} = {601864B9-D8C2-4FD0-B844-70A0F865B67F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Tests", "core\TrackableData.Tests\TrackableData.Tests.csproj", "{A915294A-D1A8-4783-801D-E676A262EA16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.Tests", "core\TrackableData.Core.Tests\TrackableData.Core.Tests.csproj", "{A915294A-D1A8-4783-801D-E676A262EA16}"
 	ProjectSection(ProjectDependencies) = postProject
 		{011E72B0-3E37-4652-ACB9-2CAC26665AFD} = {011E72B0-3E37-4652-ACB9-2CAC26665AFD}
 	EndProjectSection
@@ -76,7 +77,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.MongoDB.Tests
 		{011E72B0-3E37-4652-ACB9-2CAC26665AFD} = {011E72B0-3E37-4652-ACB9-2CAC26665AFD}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.PostgreSql", "plugins\TrackableData.PostgreSql\TrackableData.PostgreSql.csproj", "{EA7DD842-6E6B-4C81-8B74-2E758C9CF8B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.PostgreSql", "plugins\TrackableData.Core.PostgreSql\TrackableData.Core.PostgreSql.csproj", "{EA7DD842-6E6B-4C81-8B74-2E758C9CF8B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.PostgreSql.Tests", "plugins\TrackableData.PostgreSql.Tests\TrackableData.PostgreSql.Tests.csproj", "{8630BC70-3C6D-4C5B-AA6D-C6A2EAB64226}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -84,14 +85,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.PostgreSql.Te
 		{601864B9-D8C2-4FD0-B844-70A0F865B67F} = {601864B9-D8C2-4FD0-B844-70A0F865B67F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Sql", "plugins\TrackableData.Sql\TrackableData.Sql.csproj", "{D472777A-9C57-4B6B-92B8-0960FECC06B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.Sql", "plugins\TrackableData.Core.Sql\TrackableData.Core.Sql.csproj", "{D472777A-9C57-4B6B-92B8-0960FECC06B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.SqlTestKits", "plugins\TrackableData.SqlTestKits\TrackableData.SqlTestKits.csproj", "{601864B9-D8C2-4FD0-B844-70A0F865B67F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{011E72B0-3E37-4652-ACB9-2CAC26665AFD} = {011E72B0-3E37-4652-ACB9-2CAC26665AFD}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Redis", "plugins\TrackableData.Redis\TrackableData.Redis.csproj", "{DF4668DB-46C9-4FDC-AFC2-418DEBA27D12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Core.Redis", "plugins\TrackableData.Core.Redis\TrackableData.Core.Redis.csproj", "{DF4668DB-46C9-4FDC-AFC2-418DEBA27D12}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableData.Redis.Tests", "plugins\TrackableData.Redis.Tests\TrackableData.Redis.Tests.csproj", "{DF1BE9EE-C051-4915-B1C0-FE3DB423E946}"
 	ProjectSection(ProjectDependencies) = postProject

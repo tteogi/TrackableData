@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TrackableData.Json\TrackableData.Json.csproj">
-    </ProjectReference>
+    <ProjectReference Include="..\TrackableData.Core.Json\TrackableData.Core.Json.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TrackableData.MongoDB\TrackableData.MongoDB.csproj" />
+    <ProjectReference Include="..\TrackableData.Core.MongoDB\TrackableData.Core.MongoDB.csproj" />
     <ProjectReference Include="..\TrackableData.TestKits\TrackableData.TestKits.csproj" />
   </ItemGroup>
 
