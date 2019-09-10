@@ -9,14 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\TrackableData\TrackableData.csproj" />
-    <ProjectReference Include="..\TrackableData.Sql\TrackableData.Sql.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+    <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
   </ItemGroup>
-
-  
 
 </Project>

@@ -9,12 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\TrackableData\TrackableData.csproj" />
+    <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
+    <ProjectReference Include="..\TrackableData.Sql\TrackableData.Sql.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
+
+  
 
 </Project>

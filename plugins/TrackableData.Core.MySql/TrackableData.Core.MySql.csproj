@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\TrackableData\TrackableData.csproj" />
+    <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
     <ProjectReference Include="..\TrackableData.Sql\TrackableData.Sql.csproj" />
   </ItemGroup>
 

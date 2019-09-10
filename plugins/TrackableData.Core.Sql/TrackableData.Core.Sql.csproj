@@ -9,11 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\TrackableData\TrackableData.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="2.4.0" />
+    <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
   </ItemGroup>
 
 </Project>
