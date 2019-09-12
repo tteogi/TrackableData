@@ -32,7 +32,7 @@ let copyright = "Copyright © 2019 tteogi"
 let authors = ["TenY"]
 let owner = "TenY"
 let solutionFile = "CodeWriter"
-let nugetVersion = "1.0.0";
+let nugetVersion = "1.0.1";
 let gitHome = "https://github.com/tteogi"
 let gitName = "TrackableData"
 let projectUrl = sprintf "%s/%s" gitHome gitName
@@ -44,9 +44,6 @@ type ProjectObject = struct
    val Tag : string
    val Description : float
 end
-
-let ProjectObjects = [|
-|]
 
 Target.create "Pack" (fun _ ->
     let pack basePath project description tag =
@@ -136,9 +133,10 @@ Target.create "Push" (fun _ ->
 )
 
 open Fake.Core.TargetOperators
-//"Clean"
-//  ==> "Pack"
-"Push"
+
+"Clean"
+  ==> "Pack"
+  ==>  "Push"
   ==> "Default"
 
 // start build

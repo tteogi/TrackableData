@@ -13,4 +13,12 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1-beta3-final" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="contents\TrackableData.Templates.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TrackableData.Templates.targets" />
+  </ItemGroup>
+
 </Project>

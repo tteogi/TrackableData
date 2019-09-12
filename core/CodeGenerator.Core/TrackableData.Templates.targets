@@ -1,0 +1,28 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Code Generation Task -->
+  <Target Name="TrackableDataPreprocessing"
+          AfterTargets="BeforeCompile;ResolveReferences"
+          BeforeTargets="CoreCompile;AkkaInterfacedPreprocessing"
+          Inputs="@(Compile);@(ReferencePath)"
+          Outputs="$(ProjectDir)$(IntermediateOutputPath)$(TargetName)$(TargetExt)">
+    <Message Text="[TrackableDataPreprocessing] - Project=$(ProjectName)" Importance="high"/>
+    <Touch Files="$(ProjectDir)Gen\TrackableData.CodeGen.cs"
+           Condition="!Exists('$(ProjectDir)Gen\TrackableData.CodeGen.cs')"
+           ForceTouch="true"
+           AlwaysCreate="true"
+           ContinueOnError="true" />
+    <PropertyGroup>
+      <ArgsFile>$(IntermediateOutputPath)$(TargetName).TrackableData.CodeGen.Args.txt</ArgsFile>
+      <SourceFiles>@(Compile->'%(Identity)', ';')</SourceFiles>
+      <ReferenceFiles>@(ReferencePath->'%(Identity)', ';')</ReferenceFiles>
+    </PropertyGroup>
+    <Message Text="[TrackableDataPreprocessing] - Code-gen args file=$(ArgsFile)"/>
+    <WriteLinesToFile Overwrite="true" File="$(ArgsFile)" Lines=""/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--path=$(ProjectDir)"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--source=$([MSBuild]::Escape($(SourceFiles)))"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--reference=$([MSBuild]::Escape($(ReferenceFiles)))"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--define=$([MSBuild]::Escape($(DefineConstants)))"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--target=$(TrackableDataTarget)" Condition="$(TrackableDataTarget) != ''"/>
+    <Exec Command='"$(TrackableDataCodeGenToolExe)" "@$(ArgsFile)"' />
+  </Target>
+</Project>

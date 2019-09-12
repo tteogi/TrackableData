@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -71,6 +72,22 @@ namespace CodeGen
             foreach (var type in node.BaseList.Types)
             {
                 var genericName = type.Type as GenericNameSyntax;
+                if (genericName != null)
+                {
+                    if (CompareTypeName(genericName.Identifier.ToString(), name))
+                        return genericName;
+                }
+            }
+            return null;
+        }
+
+        public static SimpleNameSyntax GetBase(this InterfaceDeclarationSyntax node, string name)
+        {
+            if (node.BaseList == null)
+                return null;
+            foreach (var type in node.BaseList.Types)
+            {
+                var genericName = type.Type as SimpleNameSyntax;
                 if (genericName != null)
                 {
                     if (CompareTypeName(genericName.Identifier.ToString(), name))
