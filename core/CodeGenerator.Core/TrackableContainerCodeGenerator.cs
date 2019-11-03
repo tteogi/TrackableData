@@ -193,6 +193,9 @@ namespace CodeGen
                     var messagePackMemberAttr = p.AttributeLists.GetAttribute("KeyAttribute");
                     if (messagePackMemberAttr != null)
                         w._($"[Key{messagePackMemberAttr.ArgumentList}] ");
+                    var ignoreMemberAttr = p.AttributeLists.GetAttribute("IgnoreMemberAttribute");
+                    if (ignoreMemberAttr != null)
+                        w._($"[IgnoreMember]");
 
                     using (w.B($"public {propertyType} {propertyName}"))
                     {
@@ -240,6 +243,9 @@ namespace CodeGen
                     var messagePackMemberAttr = p.AttributeLists.GetAttribute("KeyAttribute");
                     if (messagePackMemberAttr != null)
                         w._($"[Key{messagePackMemberAttr?.ArgumentList}] ");
+                    var ignoreMemberAttr = p.AttributeLists.GetAttribute("IgnoreMemberAttribute");
+                    if (ignoreMemberAttr != null)
+                        w._($"[IgnoreMember]");
 
                     var propertyName = p.Identifier.ToString();
                     var trackerName = Utility.GetTrackerClassName(p.Type);

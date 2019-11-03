@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using CommandLine;
 
 namespace CodeGen
@@ -19,5 +20,8 @@ namespace CodeGen
 
         [Option('t', "target", HelpText = "Filename of a generated code.")]
         public string TargetFile { get; set; }
+
+        [Option('e', "eftarget", HelpText = "Filename of a generated code.", Required = false)]
+        public string EntityFrameworkTargetFile { get; set; }
     }
 }
