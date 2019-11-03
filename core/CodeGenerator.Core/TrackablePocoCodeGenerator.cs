@@ -44,15 +44,15 @@ namespace CodeGen
             var properties = idecl.GetProperties();
             var trackableProperties = Utility.GetTrackableProperties(properties);
 
-            if (useProtoContract)
-                w._($"[ProtoContract]");
+            var serializeType = Utility.GetClassSerializeType(idecl.AttributeLists);
+            serializeType.WriteSerializerString(w);
 
             using (w.B($"public partial class {className} : {typeName}"))
             {
                 // Tracker
 
-                w._($"[IgnoreDataMember]",
-                    $"public IPocoTracker<{typeName}> Tracker {{ get; set; }}");
+                serializeType.WriteIgnore(w);
+                w._($"public IPocoTracker<{typeName}> Tracker {{ get; set; }}");
                 w._();
 
                 // Clone
@@ -72,8 +72,8 @@ namespace CodeGen
 
                 // ITrackable.Changed
 
-                w._("[IgnoreDataMember]",
-                    "public bool Changed { get { return Tracker != null && Tracker.HasChange; } }");
+                serializeType.WriteIgnore(w);
+                w._("public bool Changed { get { return Tracker != null && Tracker.HasChange; } }");
                 w._();
 
                 // ITrackable.Tracker
@@ -175,6 +175,9 @@ namespace CodeGen
                     var protoMemberAttr = p.AttributeLists.GetAttribute("ProtoMemberAttribute");
                     if (protoMemberAttr != null)
                         w._($"[ProtoMember{protoMemberAttr?.ArgumentList}] ");
+                    var messagePackMemberAttr = p.AttributeLists.GetAttribute("KeyAttribute");
+                    if (messagePackMemberAttr != null)
+                        w._($"[Key{messagePackMemberAttr?.ArgumentList}] ");
 
                     using (w.B($"public {propertyType} {propertyName}"))
                     {

@@ -83,6 +83,14 @@ namespace CodeGen
                 var targetDefaultPath = @".\Properties\TrackableData.CodeGen.cs";
                 var targetPath = MakeFullPath(options.TargetFile ?? targetDefaultPath, basePath);
 
+                foreach (var source in options.Sources)
+                {
+                    Console.WriteLine("source: " + source);
+                }
+
+                Console.WriteLine("options: " + options.TargetFile);
+
+
                 // Parse sources and extract interfaces
 
                 Console.WriteLine("- Parse sources");

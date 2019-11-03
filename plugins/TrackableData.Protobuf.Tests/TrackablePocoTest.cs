@@ -1,4 +1,6 @@
-﻿using ProtoBuf.Meta;
+﻿using System;
+using System.IO;
+using ProtoBuf.Meta;
 using Xunit;
 
 namespace TrackableData.Protobuf.Tests
@@ -52,6 +54,20 @@ namespace TrackableData.Protobuf.Tests
 
             var person2 = CreateTestPerson();
             tracker2.ApplyTo(person2);
+
+            ArraySegment<byte> segment;
+            using (var stream = new MemoryStream())
+            {
+                typeModel.Serialize(stream, person.Tracker);
+                segment = new ArraySegment<byte>(stream.GetBuffer(), 0, (int)stream.Length);
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                stream.Write(segment);
+                stream.Seek(0, SeekOrigin.Begin);
+                typeModel.Deserialize(stream, tracker2, tracker2.GetType());
+            }
 
             Assert.Equal(person.Name, person2.Name);
             Assert.Equal(person.Age, person2.Age);

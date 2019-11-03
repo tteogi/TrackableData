@@ -14,15 +14,17 @@ using System.Runtime.Serialization;
 using System.Linq;
 using System.Text;
 using TrackableData;
+using MessagePack;
 
 #region IPerson
 
 namespace TrackableData.Json.Tests
 {
+    [MessagePackObject]
     public partial class TrackablePerson : IPerson
     {
+        [IgnoreMember]
         [IgnoreDataMember]
-
         public IPocoTracker<IPerson> Tracker { get; set; }
 
         public TrackablePerson Clone()
@@ -35,6 +37,7 @@ namespace TrackableData.Json.Tests
             return o;
         }
 
+        [IgnoreMember]
         [IgnoreDataMember]
         public bool Changed { get { return Tracker != null && Tracker.HasChange; } }
 
@@ -102,6 +105,7 @@ namespace TrackableData.Json.Tests
 
         private string _Name;
 
+        [Key(0)] 
         public string Name
         {
             get
@@ -118,6 +122,7 @@ namespace TrackableData.Json.Tests
 
         private int _Age;
 
+        [Key(1)] 
         public int Age
         {
             get
@@ -134,6 +139,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableHand _LeftHand;
 
+        [Key(2)] 
         public TrackableHand LeftHand
         {
             get
@@ -150,6 +156,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableHand _RightHand;
 
+        [Key(3)] 
         public TrackableHand RightHand
         {
             get
@@ -171,8 +178,10 @@ namespace TrackableData.Json.Tests
 
 namespace TrackableData.Json.Tests
 {
+    [MessagePackObject]
     public partial class TrackableHand : IHand
     {
+        [IgnoreMember]
         [IgnoreDataMember]
         public IPocoTracker<IHand> Tracker { get; set; }
 
@@ -184,6 +193,7 @@ namespace TrackableData.Json.Tests
             return o;
         }
 
+        [IgnoreMember]
         [IgnoreDataMember]
         public bool Changed { get { return Tracker != null && Tracker.HasChange; } }
 
@@ -249,6 +259,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableRing _MainRing;
 
+        [Key(0)] 
         public TrackableRing MainRing
         {
             get
@@ -265,6 +276,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableRing _SubRing;
 
+        [Key(1)] 
         public TrackableRing SubRing
         {
             get
@@ -286,8 +298,10 @@ namespace TrackableData.Json.Tests
 
 namespace TrackableData.Json.Tests
 {
+    [MessagePackObject]
     public partial class TrackableRing : IRing
     {
+        [IgnoreMember]
         [IgnoreDataMember]
         public IPocoTracker<IRing> Tracker { get; set; }
 
@@ -299,6 +313,7 @@ namespace TrackableData.Json.Tests
             return o;
         }
 
+        [IgnoreMember]
         [IgnoreDataMember]
         public bool Changed { get { return Tracker != null && Tracker.HasChange; } }
 
@@ -355,6 +370,7 @@ namespace TrackableData.Json.Tests
 
         private string _Name;
 
+        [Key(0)] 
         public string Name
         {
             get
@@ -371,6 +387,7 @@ namespace TrackableData.Json.Tests
 
         private int _Power;
 
+        [Key(1)] 
         public int Power
         {
             get
@@ -392,11 +409,14 @@ namespace TrackableData.Json.Tests
 
 namespace TrackableData.Json.Tests
 {
+    [MessagePackObject]
     public partial class TrackableDataContainer : IDataContainer
     {
+        [IgnoreMember]
         [IgnoreDataMember]
         private TrackableDataContainerTracker _tracker;
 
+        [IgnoreMember]
         [IgnoreDataMember]
         public TrackableDataContainerTracker Tracker
         {
@@ -424,6 +444,8 @@ namespace TrackableData.Json.Tests
             return o;
         }
 
+        [IgnoreMember]
+        [IgnoreDataMember]
         public bool Changed { get { return Tracker != null && Tracker.HasChange; } }
 
         ITracker ITrackable.Tracker
@@ -505,6 +527,7 @@ namespace TrackableData.Json.Tests
 
         private TrackablePerson _Person = new TrackablePerson();
 
+        [Key(0)] 
         public TrackablePerson Person
         {
             get
@@ -529,6 +552,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableDictionary<int, string> _Dictionary = new TrackableDictionary<int, string>();
 
+        [Key(1)] 
         public TrackableDictionary<int, string> Dictionary
         {
             get
@@ -553,6 +577,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableList<string> _List = new TrackableList<string>();
 
+        [Key(2)] 
         public TrackableList<string> List
         {
             get
@@ -577,6 +602,7 @@ namespace TrackableData.Json.Tests
 
         private TrackableSet<int> _Set = new TrackableSet<int>();
 
+        [Key(3)] 
         public TrackableSet<int> Set
         {
             get
@@ -600,11 +626,16 @@ namespace TrackableData.Json.Tests
         }
     }
 
+    [MessagePackObject]
     public class TrackableDataContainerTracker : IContainerTracker<IDataContainer>
     {
+        [Key(0)] 
         public TrackablePocoTracker<IPerson> PersonTracker { get; set; } = new TrackablePocoTracker<IPerson>();
+        [Key(1)] 
         public TrackableDictionaryTracker<int, string> DictionaryTracker { get; set; } = new TrackableDictionaryTracker<int, string>();
+        [Key(2)] 
         public TrackableListTracker<string> ListTracker { get; set; } = new TrackableListTracker<string>();
+        [Key(3)] 
         public TrackableSetTracker<int> SetTracker { get; set; } = new TrackableSetTracker<int>();
 
         public override string ToString()
@@ -656,6 +687,8 @@ namespace TrackableData.Json.Tests
             return sb.ToString();
         }
 
+        [IgnoreMember]
+        [IgnoreDataMember]
         public bool HasChange
         {
             get

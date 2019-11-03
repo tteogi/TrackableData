@@ -32,7 +32,7 @@ let copyright = "Copyright © 2019 tteogi"
 let authors = ["TenY"]
 let owner = "TenY"
 let solutionFile = "CodeWriter"
-let nugetVersion = "1.0.1";
+let nugetVersion = "1.0.2";
 let gitHome = "https://github.com/tteogi"
 let gitName = "TrackableData"
 let projectUrl = sprintf "%s/%s" gitHome gitName
@@ -96,6 +96,9 @@ Target.create "Pack" (fun _ ->
     pack "plugins" "TrackableData.Core.Protobuf"
         """Protobuf-net surrogates for tracker classes of TrackableData for DotNet Core."""
         "trackable data protobuf"
+    pack "plugins" "TrackableData.Core.MessagePack"
+        """neuecc/MessagePack-CSharp Resolver for tracker classes of TrackableData for DotNet Core."""
+        "trackable data messagepack"
     pack "plugins" "TrackableData.Core.Redis"
         """Object-document mapper between TrackableData and Redis for DotNet Core."""
         "trackable data redis nosql odm"
