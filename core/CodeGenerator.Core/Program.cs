@@ -94,10 +94,12 @@ namespace CodeGen
                     file => CSharpSyntaxTree.ParseText(File.ReadAllText(file), path: file)).ToArray();
                 var interfaceDeclarations = syntaxTrees.SelectMany(
                     st => st.GetRoot().DescendantNodes().OfType<InterfaceDeclarationSyntax>()).ToArray();
+                var classDeclarations = syntaxTrees.SelectMany(
+                    st => st.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()).ToArray();
 
-                // Generate code
+                // Generate codev
                 WriteTrackableData(options, interfaceDeclarations);
-                WriteEntityFramework(options, interfaceDeclarations);
+                WriteEntityFramework(options, interfaceDeclarations, classDeclarations);
 
                 return 0;
             }
@@ -194,7 +196,7 @@ namespace CodeGen
                 Console.WriteLine("Nothing changed. Skip writing.");
         }
 
-        private static void WriteEntityFramework(Options options, InterfaceDeclarationSyntax[] interfaceDeclarations)
+        private static void WriteEntityFramework(Options options, TypeDeclarationSyntax[] interfaceDeclarations, TypeDeclarationSyntax[] classDeclarationSyntax)
         {
             Console.WriteLine("- Generate entity framework code");
 
@@ -228,6 +230,16 @@ namespace CodeGen
 
             var dbCodeGen = new EntityFrameworkCodeGenerator() {Options = options};
             foreach (var idecl in interfaceDeclarations)
+            {
+                var baseType = idecl.GetBase("IEntityFrameworkModel");
+                if (baseType != null)
+                {
+                    dbCodeGen.GenerateCode(idecl, w);
+                    relatedSourceTrees.Add(idecl.GetRootNode());
+                }
+            }
+
+            foreach (var idecl in classDeclarationSyntax)
             {
                 var baseType = idecl.GetBase("IEntityFrameworkModel");
                 if (baseType != null)

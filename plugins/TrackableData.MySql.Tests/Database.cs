@@ -12,7 +12,8 @@ namespace TrackableData.MySql.Tests
     {
         public Database()
         {
-            var cstr = ConfigurationManager.ConnectionStrings["TestDb"].ConnectionString;
+            var cstr =
+                "Server=share-db.cofjmvbuivwg.ap-northeast-2.rds.amazonaws.com;Database=TrackableDataTest;Uid=agent;Pwd=dlfeks30djrqjfwk";
 
             // create TestDb if not exist
 
@@ -39,7 +40,8 @@ namespace TrackableData.MySql.Tests
         {
             get
             {
-                var cstr = ConfigurationManager.ConnectionStrings["TestDb"].ConnectionString;
+                var cstr =
+                    "Server=share-db.cofjmvbuivwg.ap-northeast-2.rds.amazonaws.com;Database=TrackableDataTest;Uid=agent;Pwd=dlfeks30djrqjfwk";
                 var connection = new MySqlConnection(cstr);
                 connection.Open();
                 return connection;

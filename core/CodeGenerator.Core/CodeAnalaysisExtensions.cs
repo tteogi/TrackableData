@@ -7,13 +7,13 @@ namespace CodeGen
 {
     internal static class CodeAnalaysisExtensions
     {
-        public static string GetTypeName(this InterfaceDeclarationSyntax node)
+        public static string GetTypeName(this TypeDeclarationSyntax node)
         {
             var parts = node.GetFullTypeName().Split('.');
             return parts[parts.Length - 1];
         }
 
-        public static string GetFullTypeName(this InterfaceDeclarationSyntax node)
+        public static string GetFullTypeName(this TypeDeclarationSyntax node)
         {
             var ns = GetNamespaceScope(node.Parent);
             var fullName = (ns.Any() ? ns + "." : "") + node.Identifier;
@@ -44,7 +44,7 @@ namespace CodeGen
                 return GetRootNode(node.Parent);
         }
 
-        public static PropertyDeclarationSyntax[] GetProperties(this InterfaceDeclarationSyntax node)
+        public static PropertyDeclarationSyntax[] GetProperties(this TypeDeclarationSyntax node)
         {
             return node.Members.OfType<PropertyDeclarationSyntax>().ToArray();
         }
@@ -81,7 +81,7 @@ namespace CodeGen
             return null;
         }
 
-        public static SimpleNameSyntax GetBase(this InterfaceDeclarationSyntax node, string name)
+        public static SimpleNameSyntax GetBase(this TypeDeclarationSyntax node, string name)
         {
             if (node.BaseList == null)
                 return null;
@@ -102,6 +102,16 @@ namespace CodeGen
             var ap = a.Split('.').Reverse();
             var bp = b.Split('.').Reverse();
             return ap.Zip(bp, (x, y) => x == y).All(x => x);
+        }
+
+        public static bool IsUpper(char c)
+        {
+            return (0x40 < c && 0x5b > c) ? true : false;
+        }
+
+        public static bool IsLower(char c)
+        {
+            return (0x60 < c && 0x7b > c) ? true : false;
         }
     }
 }

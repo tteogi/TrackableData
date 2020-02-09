@@ -10,7 +10,7 @@ namespace CodeGen
     {
         public Options Options { get; set; }
 
-        public void GenerateCode(InterfaceDeclarationSyntax idecl, CodeWriter.CodeWriter w)
+        public void GenerateCode(TypeDeclarationSyntax idecl, CodeWriter.CodeWriter w)
         {
             var iname = idecl.Identifier.ToString();
             Console.WriteLine("GenerateCode: " + iname);
@@ -18,10 +18,7 @@ namespace CodeGen
             w._($"#region {iname}DbContext");
             w._();
 
-            var namespaceScope = idecl.GetNamespaceScope();
-            var namespaceHandle = (string.IsNullOrEmpty(namespaceScope) == false)
-                ? w.B($"namespace {idecl.GetNamespaceScope()}")
-                : null;
+            var namespaceHandle = w.B($"namespace Database");
 
             GenerateDbContextCode(idecl, w);
 
@@ -31,10 +28,14 @@ namespace CodeGen
             w._($"#endregion");
         }
 
-        private void GenerateDbContextCode(InterfaceDeclarationSyntax idecl, CodeWriter.CodeWriter w)
+        private void GenerateDbContextCode(TypeDeclarationSyntax idecl, CodeWriter.CodeWriter w)
         {
             var typeName = idecl.GetTypeName();
-            var className = typeName.Substring(1);
+            string className;
+            if (idecl is ClassDeclarationSyntax)
+                className = typeName;
+            else
+                className = typeName.Substring(1);
 
             var properties = idecl.GetProperties();
 

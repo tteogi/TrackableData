@@ -12,4 +12,8 @@
     <ProjectReference Include="..\..\core\TrackableData.Core\TrackableData.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Ulid" Version="0.1.8" />
+  </ItemGroup>
+
 </Project>
