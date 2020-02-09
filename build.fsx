@@ -19,58 +19,71 @@ open System.IO
 open Fake.DotNet
 open Fake.DotNet.NuGet
 
+let args = Target.getArguments()
+let nugetApiKey =
+    match args with
+    | Some args ->
+        args.[0]
+    | None ->
+        // This case happens when no execution is requested (for example `--list` for listing targets)
+        // Even for empty arguments `Some [||]` is given, read docs for `Target.GetArguments()`
+        // never execute any side-effects outside of targets when `None` is given.
+        // NOTE: IDE will only show targets defined in this code-path, so never define targets based on arguments or environment variables.
+        ""
 
-let nugetApiKye = "oy2krlvnusssg3pxpbhqkgzxyxnureoetm5imuovixvtqq"
+
+Trace.tracefn "Key: %A" nugetApiKey
+
 let buildDir = "./build/"
-let testDir  = "./test/"
+let testDir = "./test/"
 let configuration = DotNet.BuildConfiguration.Release
 
 
 // Properties
 let summary = "Helper class for generating code concisely."
 let copyright = "Copyright © 2019 tteogi"
-let authors = ["TenY"]
+let authors = [ "TenY" ]
 let owner = "TenY"
 let solutionFile = "CodeWriter"
-let nugetVersion = "1.0.4";
+let nugetVersion = "1.0.7"
 let gitHome = "https://github.com/tteogi"
 let gitName = "TrackableData"
 let projectUrl = sprintf "%s/%s" gitHome gitName
 let licenceUrl = "https://raw.githubusercontent.com/tteogi/tteogi.github.io/master/MIT-LICENSE"
 
-type ProjectObject = struct
-   val Name : string
-   val BasePath : string
-   val Tag : string
-   val Description : float
-end
+type ProjectObject =
+    struct
+        val Name: string
+        val BasePath: string
+        val Tag: string
+        val Description: float
+    end
 
 Target.create "Pack" (fun _ ->
     let pack basePath project description tag =
         let projectPath = sprintf "%s/%s/%s.csproj" basePath project project
+
         let args =
             let defaultArgs = MSBuild.CliArguments.Create()
             { defaultArgs with
-                      Properties = [
-                          "Title", project
-                          "PackageVersion", nugetVersion
-                          "Authors", (String.Join(" ", authors))
-                          "Owners", owner
-                          "PackageRequireLicenseAcceptance", "false"
-                          "Description", description
-                          "Summary", summary
-                          "Copyright", copyright
-                          "PackageTags", tag
-                          "PackageProjectUrl", projectUrl
-                          "PackageLicenseUrl", licenceUrl
-                      ] }
+                  Properties =
+                      [ "Title", project
+                        "PackageVersion", nugetVersion
+                        "Authors", (String.Join(" ", authors))
+                        "Owners", owner
+                        "PackageRequireLicenseAcceptance", "false"
+                        "Description", description
+                        "Summary", summary
+                        "Copyright", copyright
+                        "PackageTags", tag
+                        "PackageProjectUrl", projectUrl
+                        "PackageLicenseUrl", licenceUrl ] }
 
         DotNet.pack (fun p ->
             { p with
                   Configuration = configuration
                   OutputPath = Some "./build"
-                  MSBuildParams = args
-              }) projectPath
+                  MSBuildParams = args }) projectPath
 
     pack "core" "CodeGenerator.Core"
         """Visual Studio project template to generate codes for POCO and container of TrackableData For DotNet Core."""
@@ -79,8 +92,7 @@ Target.create "Pack" (fun _ ->
         """POCO, list, dictionary, set and container which can track changes. These changes can be saved or rollbacked or replayed to another object For DotNet Core."""
         "trackable data"
     pack "plugins" "TrackableData.Core.Json"
-        """Json.NET converters for tracker classes of TrackableData for DotNet Core."""
-        "trackable data json"
+        """Json.NET converters for tracker classes of TrackableData for DotNet Core.""" "trackable data json"
     pack "plugins" "TrackableData.Core.MongoDB"
         """Object-document mapper between TrackableData and MongoDB for DotNet Core."""
         "trackable data mongodb nosql odm"
@@ -88,59 +100,41 @@ Target.create "Pack" (fun _ ->
         """Object-relational mapper between TrackableData and Microsoft SQL Server for DotNet Core."""
         "trackable data sqlserver sql orm mssql"
     pack "plugins" "TrackableData.Core.MySql"
-        """Object-relational mapper between TrackableData and MySQL for DotNet Core."""
-        "trackable data mysql sql orm"
+        """Object-relational mapper between TrackableData and MySQL for DotNet Core.""" "trackable data mysql sql orm"
     pack "plugins" "TrackableData.Core.PostgreSql"
         """Object-relational mapper between TrackableData and PostgreSQL for DotNet Core."""
         "trackable data postgresql sql orm"
     pack "plugins" "TrackableData.Core.Protobuf"
-        """Protobuf-net surrogates for tracker classes of TrackableData for DotNet Core."""
-        "trackable data protobuf"
+        """Protobuf-net surrogates for tracker classes of TrackableData for DotNet Core.""" "trackable data protobuf"
     pack "plugins" "TrackableData.Core.MessagePack"
         """neuecc/MessagePack-CSharp Resolver for tracker classes of TrackableData for DotNet Core."""
         "trackable data messagepack"
     pack "plugins" "TrackableData.Core.Redis"
-        """Object-document mapper between TrackableData and Redis for DotNet Core."""
-        "trackable data redis nosql odm"
+        """Object-document mapper between TrackableData and Redis for DotNet Core.""" "trackable data redis nosql odm"
     pack "plugins" "TrackableData.Core.Sql"
-        """Object-relational mapper between TrackableData and common SQL for DotNet Core."""
-        "trackable data sql orm"
-)
+        """Object-relational mapper between TrackableData and common SQL for DotNet Core.""" "trackable data sql orm")
 
 
 // Targets
-Target.create "Clean" (fun _ ->
-  Shell.cleanDirs [buildDir; testDir]
-)
+Target.create "Clean" (fun _ -> Shell.cleanDirs [ buildDir; testDir ])
 
-Target.create "Default" (fun _ ->
-  Trace.trace "Hello World from FAKE"
-)
+Target.create "Default" (fun _ -> Trace.trace "Hello World from FAKE")
 
 Target.create "Push" (fun _ ->
-    let setNugetPushParams (defaults:NuGet.NuGetPushParams) =
-            { defaults with
-                Source = Some "https://api.nuget.org/v3/index.json"
-                ApiKey = Some nugetApiKye
+    let setNugetPushParams (defaults: NuGet.NuGetPushParams) =
+        { defaults with
+              Source = Some "https://api.nuget.org/v3/index.json"
+              ApiKey = Some nugetApiKey }
 
-             }
-    let setParams (defaults:DotNet.NuGetPushOptions) =
-            { defaults with
-                PushParams = setNugetPushParams defaults.PushParams
-             }
+    let setParams (defaults: DotNet.NuGetPushOptions) =
+        { defaults with PushParams = setNugetPushParams defaults.PushParams }
 
     IO.Directory.EnumerateFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly)
-    |> Seq.iter (fun nupkg ->
-        DotNet.nugetPush setParams nupkg
-    )
-)
+    |> Seq.iter (fun nupkg -> DotNet.nugetPush setParams nupkg))
 
 open Fake.Core.TargetOperators
 
-"Clean"
-  ==> "Pack"
-  ==>  "Push"
-  ==> "Default"
+"Clean" ==> "Pack" ==> "Push" ==> "Default"
 
 // start build
-Target.runOrDefault "Default"
+Target.runOrDefaultWithArguments "Default"

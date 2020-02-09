@@ -39,7 +39,7 @@ namespace CodeGen
             else
                 className = typeName.Substring(1);
 
-            var hideProperties = new List<Tuple<string, string>>();
+            var hideProperties = new List<Tuple<string, string, string>>();
             var attribute = idecl.AttributeLists.GetAttribute("EntityFrameworkModel");
             foreach (var arg in attribute.ArgumentList.Arguments)
             {
@@ -47,7 +47,11 @@ namespace CodeGen
                 var span = ss.Split(':');
                 if (span.Length == 3)
                 {
-                    hideProperties.Add(new Tuple<string, string>(span[1], span[2].Remove(span[2].Length - 1)));
+                    hideProperties.Add(new Tuple<string, string, string>(span[1], span[2].Remove(span[2].Length - 1), null));
+                }
+                if (span.Length == 4)
+                {
+                    hideProperties.Add(new Tuple<string, string, string>(span[1], span[2], "\""+ span[3]));
                 }
             }
 
@@ -55,8 +59,22 @@ namespace CodeGen
 
             using (w.b($"public partial class {className}"))
             {
+                void SetEntityFrameworkAttribute(string args)
+                {
+                    if (args.StartsWith("@"))
+                        args = args.Substring(2).Replace("\"\"", "\"");
+                    else
+                        args = args.Substring(1).Replace("\\", "");
+                    args = args.Substring(0, args.Length - 1);
+                    w._(args);
+                }
+
                 foreach (var property in hideProperties)
                 {
+                    if (property.Item3 != null)
+                    {
+                        SetEntityFrameworkAttribute(property.Item3);
+                    }
                     w._($"public {property.Item1} {property.Item2} {{ get; set; }}");
                 }
 
@@ -69,16 +87,10 @@ namespace CodeGen
                     if (ignore != null)
                         continue;
                     var entityFrameworkAttribute = p.AttributeLists.GetAttribute("EntityFrameworkPropertyAttribute");
-
                     if (entityFrameworkAttribute != null)
                     {
                         var args = entityFrameworkAttribute.ArgumentList.Arguments.ToString();
-                        if (args.StartsWith("@"))
-                            args = args.Substring(2).Replace("\"\"", "\"");
-                        else
-                            args = args.Substring(1).Replace("\\", "");
-                        args = args.Substring(0, args.Length - 1);
-                        w._(args);
+                        SetEntityFrameworkAttribute(args);
                     }
                     w._($"public {propertyType} {propertyName} {{ get; set; }}");
                 }
