@@ -33,14 +33,33 @@ namespace CodeGen
             var typeName = idecl.GetTypeName();
             string className;
             if (idecl is ClassDeclarationSyntax)
+            {
                 className = typeName;
+            }
             else
                 className = typeName.Substring(1);
+
+            var hideProperties = new List<Tuple<string, string>>();
+            var attribute = idecl.AttributeLists.GetAttribute("EntityFrameworkModel");
+            foreach (var arg in attribute.ArgumentList.Arguments)
+            {
+                var ss = arg.ToString();
+                var span = ss.Split(':');
+                if (span.Length == 3)
+                {
+                    hideProperties.Add(new Tuple<string, string>(span[1], span[2].Remove(span[2].Length - 1)));
+                }
+            }
 
             var properties = idecl.GetProperties();
 
             using (w.b($"public partial class {className}"))
             {
+                foreach (var property in hideProperties)
+                {
+                    w._($"public {property.Item1} {property.Item2} {{ get; set; }}");
+                }
+
                 // Property Accessors
                 foreach (var p in properties)
                 {
@@ -49,18 +68,8 @@ namespace CodeGen
                     var ignore = p.AttributeLists.GetAttribute("IgnoreEntityFrameworkModel");
                     if (ignore != null)
                         continue;
-                    var entityFrameworkAttribute = p.AttributeLists.GetAttribute("EntityFrameworkModelAttribute");
-//                        List<AttributeSyntax> attributeSyntaxes = new List<AttributeSyntax>();
-//                        foreach (var attributeListSyntax in p.AttributeLists)
-//                        {
-//                            foreach (var attribute in attributeListSyntax.Attributes)
-//                            {
-//                                attributeSyntaxes.Add(attribute);
-//                                Console.WriteLine(attribute);
-//                            }
-//                        }
-//                        foreach (var attributeSyntax in attributeSyntaxes)
-//                        {
+                    var entityFrameworkAttribute = p.AttributeLists.GetAttribute("EntityFrameworkPropertyAttribute");
+
                     if (entityFrameworkAttribute != null)
                     {
                         var args = entityFrameworkAttribute.ArgumentList.Arguments.ToString();
@@ -71,8 +80,6 @@ namespace CodeGen
                         args = args.Substring(0, args.Length - 1);
                         w._(args);
                     }
-
-//                        }
                     w._($"public {propertyType} {propertyName} {{ get; set; }}");
                 }
             }

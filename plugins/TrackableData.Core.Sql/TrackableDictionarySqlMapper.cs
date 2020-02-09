@@ -32,16 +32,7 @@ namespace TrackableData.Sql
             : this(sqlProvider, tableName, keyColumnDef, null, headKeyColumnDefs)
         {
         }
-
-        public TrackableDictionarySqlMapper(ISqlProvider sqlProvider,
-            string tableName,
-            ColumnDefinition keyColumnDef,
-            ColumnDefinition[] headKeyColumnDefs = null,
-            Dictionary<string, Func<>> )
-            : this(sqlProvider, tableName, keyColumnDef, null, headKeyColumnDefs)
-        {
-        }
-
+        
         public TrackableDictionarySqlMapper(ISqlProvider sqlProvider,
                                             string tableName,
                                             ColumnDefinition keyColumnDef,

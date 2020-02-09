@@ -231,8 +231,9 @@ namespace CodeGen
             var dbCodeGen = new EntityFrameworkCodeGenerator() {Options = options};
             foreach (var idecl in interfaceDeclarations)
             {
-                var baseType = idecl.GetBase("IEntityFrameworkModel");
-                if (baseType != null)
+                var attribute = idecl.AttributeLists.GetAttribute("EntityFrameworkModel");
+                // var baseType = idecl.GetBase("IEntityFrameworkModel");
+                if (attribute != null)
                 {
                     dbCodeGen.GenerateCode(idecl, w);
                     relatedSourceTrees.Add(idecl.GetRootNode());
@@ -241,8 +242,9 @@ namespace CodeGen
 
             foreach (var idecl in classDeclarationSyntax)
             {
-                var baseType = idecl.GetBase("IEntityFrameworkModel");
-                if (baseType != null)
+                var attribute = idecl.AttributeLists.GetAttribute("EntityFrameworkModel");
+                // var baseType = idecl.GetBase("IEntityFrameworkModel");
+                if (attribute != null)
                 {
                     dbCodeGen.GenerateCode(idecl, w);
                     relatedSourceTrees.Add(idecl.GetRootNode());
