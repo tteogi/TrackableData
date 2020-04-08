@@ -10,13 +10,6 @@ namespace TrackableData.MessagePack
 {
     public class TrackableContainerTrackerMessagePackFormatter<T> : IMessagePackFormatter<T>
     {
-        public class MethodInfoWrap
-        {
-            internal MethodInfo Serialize;
-            internal MethodInfo Deserialize;
-            internal object Instance;
-        }
-
         struct Changed
         {
             public string PropertyName;
