@@ -6,8 +6,8 @@
           Inputs="@(Compile);@(ReferencePath)"
           Outputs="$(ProjectDir)$(IntermediateOutputPath)$(TargetName)$(TargetExt)">
     <Message Text="[TrackableDataPreprocessing] - Project=$(ProjectName)" Importance="high"/>
-    <Touch Files="$(ProjectDir)Gen\TrackableData.CodeGen.cs"
-           Condition="!Exists('$(ProjectDir)Gen\TrackableData.CodeGen.cs')"
+    <Touch Files="$(TrackableDataTarget)"
+           Condition="!Exists('$(TrackableDataTarget)')"
            ForceTouch="true"
            AlwaysCreate="true"
            ContinueOnError="true" />

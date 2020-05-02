@@ -25,10 +25,6 @@ let nugetApiKey =
     | Some args ->
         args.[0]
     | None ->
-        // This case happens when no execution is requested (for example `--list` for listing targets)
-        // Even for empty arguments `Some [||]` is given, read docs for `Target.GetArguments()`
-        // never execute any side-effects outside of targets when `None` is given.
-        // NOTE: IDE will only show targets defined in this code-path, so never define targets based on arguments or environment variables.
         ""
 
 
@@ -45,7 +41,7 @@ let copyright = "Copyright © 2019 tteogi"
 let authors = [ "TenY" ]
 let owner = "TenY"
 let solutionFile = "CodeWriter"
-let nugetVersion = "1.0.9"
+let nugetVersion = "1.0.10"
 let gitHome = "https://github.com/tteogi"
 let gitName = "TrackableData"
 let projectUrl = sprintf "%s/%s" gitHome gitName
