@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -55,39 +54,6 @@ namespace TrackableData.MessagePack
             return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
         }
 
-//        public void Serialize(ref MessagePackWriter writer, ITrackableContainer<T> value, MessagePackSerializerOptions options)
-//        {
-//            foreach (var pi in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-//            {
-//                if (typeof(ITracker).IsAssignableFrom(pi.PropertyType) == false)
-//                    continue;
-//
-//                var subTracker = (ITracker)pi.GetValue(value, null);
-//                if (subTracker != null && subTracker.HasChange)
-//                {
-//                    serializer.Serialize(writer, subTracker);
-//                }
-//            }
-//        }
-//
-//        public void Serialize(ref MessagePackWriter writer, ITrackableContainer<T> value, MessagePackSerializerOptions options)
-//        {
-//            foreach (var pi in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-//            {
-//                if (typeof(ITracker).IsAssignableFrom(pi.PropertyType) == false)
-//                    continue;
-//
-//                var subTracker = (ITracker)pi.GetValue(value, null);
-//                if (subTracker != null && subTracker.HasChange)
-//                {
-//                    serializer.Serialize(writer, subTracker);
-//                }
-//            }
-//        }
-//
-//        ITrackableContainer<T> IMessagePackFormatter<T>.Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
-//        {
-//        }
         public void Serialize(ref MessagePackWriter writer, T value, MessagePackSerializerOptions options)
         {
             var properties = new List<Changed>();

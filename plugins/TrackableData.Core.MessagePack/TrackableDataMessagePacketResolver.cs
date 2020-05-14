@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using MessagePack;
+﻿using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
 #if !NET35
 using System;
-using System.Collections.Concurrent;
-using System.Reflection;
 
 namespace TrackableData.MessagePack
 {
@@ -32,14 +29,11 @@ namespace TrackableData.MessagePack
 
                 var type = typeof(T);
                 var arguments = type.GetGenericArguments();
-                if (arguments.Length == 0)
+                if (typeof(IContainerTracker).IsAssignableFrom(type))
                 {
-                    if (typeof(IContainerTracker).IsAssignableFrom(type))
-                    {
-                        var trackerType = typeof(TrackableContainerTrackerMessagePackFormatter<>)
-                            .MakeGenericType(type);
-                        formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
-                    }
+                    var trackerType = typeof(TrackableContainerTrackerMessagePackFormatter<>)
+                        .MakeGenericType(type);
+                    formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
                 }
                 else if (arguments.Length == 1)
                 {
@@ -101,5 +95,4 @@ namespace TrackableData.MessagePack
         }
     }
 }
-
 #endif

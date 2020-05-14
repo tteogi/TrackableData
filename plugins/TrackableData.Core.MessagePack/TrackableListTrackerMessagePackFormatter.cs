@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using MessagePack;
+﻿using MessagePack;
 using MessagePack.Formatters;
 
 namespace TrackableData.MessagePack
