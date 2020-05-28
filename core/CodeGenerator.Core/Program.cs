@@ -228,6 +228,12 @@ namespace CodeGen
 
             // entity framework
 
+            if (string.IsNullOrEmpty(options.EntityFrameworkTargetFile))
+            {
+                Console.WriteLine("Nothing changed. Skip writing.");
+                return;
+            }
+
             var dbCodeGen = new EntityFrameworkCodeGenerator() {Options = options};
             foreach (var idecl in interfaceDeclarations)
             {
