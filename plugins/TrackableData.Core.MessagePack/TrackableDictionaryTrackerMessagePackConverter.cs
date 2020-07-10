@@ -31,26 +31,6 @@ namespace TrackableData.MessagePack
 
     public class TrackableDictionaryTrackerMessagePackConverter<TKey, TValue>
     {
-        [MessagePackObject()]
-        public class Changed
-        {
-            public Changed(int operation, TKey index, TValue value)
-            {
-                Operation = operation;
-                Index = index;
-                Value = value;
-            }
-
-            [Key(0)]
-            public int Operation { get; set; }
-
-            [Key(1)]
-            public TKey Index { get; set; }
-
-            [Key(2)]
-            public TValue Value { get; set; }
-        }
-
         public static void Serialize(ref MessagePackWriter writer, TrackableDictionaryTracker<TKey, TValue> value,
             MessagePackSerializerOptions options)
         {
@@ -61,18 +41,21 @@ namespace TrackableData.MessagePack
                 switch (item.Value.Operation)
                 {
                     case TrackableDictionaryOperation.Add:
-                        MessagePackSerializer.Serialize(ref writer,
-                            new Changed((int) item.Value.Operation, item.Key, item.Value.NewValue), options);
+                        writer.Write((int) item.Value.Operation);
+                        MessagePackSerializer.Serialize(ref writer, item.Key, options);
+                        MessagePackSerializer.Serialize(ref writer, item.Value.NewValue, options);
                         break;
 
                     case TrackableDictionaryOperation.Remove:
-                        MessagePackSerializer.Serialize(ref writer,
-                            new Changed((int) item.Value.Operation, item.Key, default(TValue)), options);
+                        writer.Write((int) item.Value.Operation);
+                        MessagePackSerializer.Serialize(ref writer, item.Key, options);
+                        MessagePackSerializer.Serialize(ref writer, default(TValue), options);
                         break;
 
                     case TrackableDictionaryOperation.Modify:
-                        MessagePackSerializer.Serialize(ref writer,
-                            new Changed((int) item.Value.Operation, item.Key, item.Value.NewValue), options);
+                        writer.Write((int) item.Value.Operation);
+                        MessagePackSerializer.Serialize(ref writer, item.Key, options);
+                        MessagePackSerializer.Serialize(ref writer, item.Value.NewValue, options);
                         break;
                 }
             }
@@ -85,18 +68,20 @@ namespace TrackableData.MessagePack
             TrackableDictionaryTracker<TKey, TValue> tracker = new TrackableDictionaryTracker<TKey, TValue>();
             for (var i = 0; i < count; i++)
             {
-                var changed = MessagePackSerializer.Deserialize<Changed>(ref reader, options);
-                switch (changed.Operation)
+                var operation = reader.ReadInt32();
+                var key = MessagePackSerializer.Deserialize<TKey>(ref reader, options);
+                var value = MessagePackSerializer.Deserialize<TValue>(ref reader, options);
+                switch (operation)
                 {
                     case (int) TrackableDictionaryOperation.Add:
-                        tracker.TrackAdd(changed.Index, changed.Value);
+                        tracker.TrackAdd(key, value);
                         break;
 
                     case (int) TrackableDictionaryOperation.Remove:
-                        tracker.TrackRemove(changed.Index, default(TValue));
+                        tracker.TrackRemove(key, value);
                         break;
                     case (int) TrackableDictionaryOperation.Modify:
-                        tracker.TrackModify(changed.Index, default(TValue), changed.Value);
+                        tracker.TrackModify(key, default(TValue), value);
                         break;
                 }
             }

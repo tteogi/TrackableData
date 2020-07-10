@@ -55,7 +55,9 @@ namespace TrackableData.MessagePack
             writer.WriteArrayHeader(tracker.ChangeList.Count);
             foreach (var item in tracker.ChangeList)
             {
-                MessagePackSerializer.Serialize(ref writer, new Changed((int) item.Operation, item.Index, item.NewValue));
+                writer.Write((int) item.Operation);
+                writer.Write(item.Index);
+                MessagePackSerializer.Serialize(ref writer, item.NewValue, options);
             }
         }
 
@@ -65,23 +67,25 @@ namespace TrackableData.MessagePack
             var length = reader.ReadArrayHeader();
             for (int i = 0; i < length; i++)
             {
-                var item = MessagePackSerializer.Deserialize<Changed>(ref reader, options);
-                switch ((TrackableListOperation) item.Operation)
+                var operation = reader.ReadInt32();
+                var index = reader.ReadInt32();
+                var value = MessagePackSerializer.Deserialize<T>(ref reader, options);
+                switch ((TrackableListOperation) operation)
                 {
                     case TrackableListOperation.Insert:
-                        tracker.TrackInsert(item.Index, item.Value);
+                        tracker.TrackInsert(index, value);
                         break;
                     case TrackableListOperation.Remove:
-                        tracker.TrackRemove(item.Index, default(T));
+                        tracker.TrackRemove(index, value);
                         break;
                     case TrackableListOperation.Modify:
-                        tracker.TrackModify(item.Index, default(T), item.Value);
+                        tracker.TrackModify(index, default(T), value);
                         break;
                     case TrackableListOperation.PushFront:
-                        tracker.TrackPushFront(item.Value);
+                        tracker.TrackPushFront(value);
                         break;
                     case TrackableListOperation.PushBack:
-                        tracker.TrackPushBack(item.Value);
+                        tracker.TrackPushBack(value);
                         break;
                     case TrackableListOperation.PopFront:
                         tracker.TrackPopFront(default(T));

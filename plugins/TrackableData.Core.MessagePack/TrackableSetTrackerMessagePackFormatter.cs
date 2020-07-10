@@ -91,8 +91,8 @@ namespace TrackableData.MessagePack
             writer.WriteArrayHeader(tracker.ChangeMap.Count);
             foreach (var item in tracker.ChangeMap)
             {
-                var changed = new Changed(item.Value == TrackableSetOperation.Add, item.Key);
-                MessagePackSerializer.Serialize(ref writer, changed, options);
+                writer.Write(item.Value == TrackableSetOperation.Add);
+                MessagePackSerializer.Serialize(ref writer, item.Key, options);
             }
         }
 
@@ -102,11 +102,12 @@ namespace TrackableData.MessagePack
             var length = reader.ReadArrayHeader();
             for (int i = 0; i < length; i++)
             {
-                var item = MessagePackSerializer.Deserialize<Changed>(ref reader, options);
-                if (item.Add)
-                    tracker.TrackAdd(item.Value);
+                var isAdd = reader.ReadBoolean();
+                var value = MessagePackSerializer.Deserialize<T>(ref reader, options);
+                if (isAdd)
+                    tracker.TrackAdd(value);
                 else
-                    tracker.TrackRemove(item.Value);
+                    tracker.TrackRemove(value);
             }
 
             return tracker;
