@@ -26,7 +26,7 @@ namespace TrackableData.Protobuf.Tests
 
         private TypeModel CreateTypeModel()
         {
-            var model = TypeModel.Create();
+            var model = RuntimeTypeModel.Create();
             model.Add(typeof(TrackableDictionaryTracker<int, string>), false)
                  .SetSurrogate(typeof(TrackableDictionaryTrackerSurrogate<int, string>));
             return model;
@@ -59,7 +59,7 @@ namespace TrackableData.Protobuf.Tests
             dict[4] = "FourAdded";
 
             var typeModel = CreateTypeModel();
-            var tracker2 = (TrackableDictionaryTracker<int, string>)typeModel.DeepClone(dict.Tracker);
+            var tracker2 = typeModel.DeepClone((TrackableDictionaryTracker<int, string>)dict.Tracker);
 
             var dict2 = CreateTestDictionary();
             tracker2.ApplyTo(dict2);

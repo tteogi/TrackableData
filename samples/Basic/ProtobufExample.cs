@@ -11,16 +11,16 @@ namespace Basic
 {
     internal class ProtobufExample
     {
-        private static TypeModel _protobufTypeModel;
+        private static RuntimeTypeModel _protobufTypeModel;
 
-        private static TypeModel ProtobufTypeModel
+        private static RuntimeTypeModel ProtobufTypeModel
         {
             get
             {
                 if (_protobufTypeModel != null)
                     return _protobufTypeModel;
 
-                var model = TypeModel.Create();
+                var model = RuntimeTypeModel.Create();
                 model.Add(typeof(TrackablePocoTracker<IUserData>), false)
                      .SetSurrogate(typeof(TrackableUserDataTrackerSurrogate));
                 model.Add(typeof(TrackableDictionaryTracker<int, string>), false)

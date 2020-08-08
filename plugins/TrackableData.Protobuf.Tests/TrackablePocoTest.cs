@@ -23,9 +23,9 @@ namespace TrackableData.Protobuf.Tests
             return person;
         }
 
-        private TypeModel CreateTypeModel()
+        private RuntimeTypeModel CreateTypeModel()
         {
-            var model = TypeModel.Create();
+            var model = RuntimeTypeModel.Create();
             model.Add(typeof(TrackablePocoTracker<IPerson>), false)
                  .SetSurrogate(typeof(TrackablePersonTrackerSurrogate));
             return model;
@@ -50,7 +50,7 @@ namespace TrackableData.Protobuf.Tests
             person.Age = 30;
 
             var typeModel = CreateTypeModel();
-            var tracker2 = (TrackablePocoTracker<IPerson>)typeModel.DeepClone(person.Tracker);
+            var tracker2 = typeModel.DeepClone((TrackablePocoTracker<IPerson>)person.Tracker);
 
             var person2 = CreateTestPerson();
             tracker2.ApplyTo(person2);
@@ -66,7 +66,7 @@ namespace TrackableData.Protobuf.Tests
             {
                 stream.Write(segment);
                 stream.Seek(0, SeekOrigin.Begin);
-                typeModel.Deserialize(stream, tracker2, tracker2.GetType());
+                typeModel.Deserialize(stream, (object)tracker2, tracker2.GetType());
             }
 
             Assert.Equal(person.Name, person2.Name);

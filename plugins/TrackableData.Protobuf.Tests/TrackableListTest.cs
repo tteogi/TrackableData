@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using ProtoBuf.Meta;
 using Xunit;
 
@@ -25,9 +26,9 @@ namespace TrackableData.Protobuf.Tests
             return list;
         }
 
-        private TypeModel CreateTypeModel()
+        private RuntimeTypeModel CreateTypeModel()
         {
-            var model = TypeModel.Create();
+            var model = RuntimeTypeModel.Create();
             model.Add(typeof(TrackableListTracker<string>), false)
                  .SetSurrogate(typeof(TrackableListTrackerSurrogate<string>));
             return model;
@@ -53,7 +54,7 @@ namespace TrackableData.Protobuf.Tests
             list.Insert(1, "TwoInserted");
 
             var typeModel = CreateTypeModel();
-            var tracker2 = (TrackableListTracker<string>)typeModel.DeepClone(list.Tracker);
+            var tracker2 = typeModel.DeepClone((TrackableListTracker<string>)list.Tracker);
 
             var list2 = CreateTestList();
             tracker2.ApplyTo(list2);
@@ -69,7 +70,8 @@ namespace TrackableData.Protobuf.Tests
             {
                 stream.Write(segment);
                 stream.Seek(0, SeekOrigin.Begin);
-                typeModel.Deserialize(stream, tracker2, tracker2.GetType());
+                var type = tracker2.GetType();
+                var go = typeModel.Deserialize(stream, (object)tracker2, type);
             }
 
             Assert.Equal(new[] { "OneModified", "TwoInserted", "Three" }, list2);

@@ -18,9 +18,9 @@ namespace TrackableData.Protobuf.Tests
             return set;
         }
 
-        private TypeModel CreateTypeModel()
+        private RuntimeTypeModel CreateTypeModel()
         {
-            var model = TypeModel.Create();
+            var model = RuntimeTypeModel.Create();
             model.Add(typeof(TrackableSetTracker<int>), false)
                  .SetSurrogate(typeof(TrackableSetTrackerSurrogate<int>));
             return model;
@@ -47,7 +47,7 @@ namespace TrackableData.Protobuf.Tests
             set.Add(5);
 
             var typeModel = CreateTypeModel();
-            var tracker2 = (TrackableSetTracker<int>)typeModel.DeepClone(set.Tracker);
+            var tracker2 = typeModel.DeepClone((TrackableSetTracker<int>)set.Tracker);
 
             var set2 = CreateTestSet();
             tracker2.ApplyTo(set2);
