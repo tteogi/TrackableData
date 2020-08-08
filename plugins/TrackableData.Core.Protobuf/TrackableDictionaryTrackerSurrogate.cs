@@ -18,6 +18,13 @@ namespace TrackableData.Protobuf
 
         [ProtoConverter]
         public static TrackableDictionaryTrackerSurrogate<TKey, TValue> Convert(
+            IDictionaryTracker<TKey, TValue> tracker)
+        {
+            return Convert((TrackableDictionaryTracker<TKey, TValue>) tracker);
+        }
+
+        [ProtoConverter]
+        public static TrackableDictionaryTrackerSurrogate<TKey, TValue> Convert(
             TrackableDictionaryTracker<TKey, TValue> tracker)
         {
             if (tracker == null)

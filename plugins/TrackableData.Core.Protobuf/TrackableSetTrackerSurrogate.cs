@@ -10,6 +10,12 @@ namespace TrackableData.Protobuf
         [ProtoMember(2)] public List<T> RemoveValues = new List<T>();
 
         [ProtoConverter]
+        public static TrackableSetTrackerSurrogate<T> Convert(ISetTracker<T> tracker)
+        {
+            return Convert((TrackableSetTracker<T>) tracker);
+        }
+
+        [ProtoConverter]
         public static TrackableSetTrackerSurrogate<T> Convert(TrackableSetTracker<T> tracker)
         {
             if (tracker == null)

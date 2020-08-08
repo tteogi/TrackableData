@@ -17,6 +17,12 @@ namespace TrackableData.Protobuf
         [ProtoMember(1)] public List<Change> ChangeList = new List<Change>();
 
         [ProtoConverter]
+        public static TrackableListTrackerSurrogate<T> Convert(IListTracker<T> tracker)
+        {
+            return Convert((TrackableListTracker<T>) tracker);
+        }
+
+        [ProtoConverter]
         public static TrackableListTrackerSurrogate<T> Convert(TrackableListTracker<T> tracker)
         {
             if (tracker == null)
