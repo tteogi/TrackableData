@@ -21,12 +21,6 @@ namespace TrackableData.MessagePack
             // use outer helper method.
             static GMsgPacketFormatterCache()
             {
-                formatter = StandardResolver.Instance.GetFormatter<T>();
-                if (formatter != null)
-                {
-                    return;
-                }
-
                 var type = typeof(T);
                 var arguments = type.GetGenericArguments();
                 if (typeof(IContainerTracker).IsAssignableFrom(type))
@@ -39,17 +33,26 @@ namespace TrackableData.MessagePack
                 {
                     SetGenericFormatter(arguments, type);
                 }
-                else if (typeof(IDictionaryTracker<,>).MakeGenericType(arguments) == type)
+                else if (arguments.Length == 2)
                 {
-                    var trackerType = typeof(TrackableDictionaryTrackerInterfaceMessagePackConverter<,>)
-                        .MakeGenericType(arguments);
-                    formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
-                }
-                else if (typeof(TrackableDictionaryTracker<,>).MakeGenericType(arguments) == type)
-                {
-                    var trackerType = typeof(TrackableDictionaryTrackerClassMessagePackConverter<,>)
-                        .MakeGenericType(arguments);
-                    formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
+                    if (typeof(IDictionaryTracker<,>).MakeGenericType(arguments) == type)
+                    {
+                        var trackerType = typeof(TrackableDictionaryTrackerInterfaceMessagePackConverter<,>)
+                            .MakeGenericType(arguments);
+                        formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
+                    }
+                    else if (typeof(TrackableDictionaryTracker<,>).MakeGenericType(arguments) == type)
+                    {
+                        var trackerType = typeof(TrackableDictionaryTrackerClassMessagePackConverter<,>)
+                            .MakeGenericType(arguments);
+                        formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
+                    }
+                    else if (typeof(TrackableDictionary<,>).MakeGenericType(arguments) == type)
+                    {
+                        var trackerType = typeof(TrackableDictionaryMessagePackFormatter<,>)
+                            .MakeGenericType(arguments);
+                        formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
+                    }
                 }
             }
 
@@ -88,6 +91,18 @@ namespace TrackableData.MessagePack
                 else if (typeof(TrackableSetTracker<>).MakeGenericType(arguments) == type)
                 {
                     var trackerType = typeof(TrackableSetTrackerClassMessagePackFormatter<>)
+                        .MakeGenericType(arguments);
+                    formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
+                }
+                else if (typeof(TrackableSet<>).MakeGenericType(arguments) == type)
+                {
+                    var trackerType = typeof(TrackableSetMessagePackFormatter<>)
+                        .MakeGenericType(arguments);
+                    formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
+                }
+                else if (typeof(TrackableList<>).MakeGenericType(arguments) == type)
+                {
+                    var trackerType = typeof(TrackableListMessagePackFormatter<>)
                         .MakeGenericType(arguments);
                     formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
                 }
