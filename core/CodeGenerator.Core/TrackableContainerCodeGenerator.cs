@@ -24,6 +24,7 @@ namespace CodeGen
 
             GenerateTrackableContainerCode(idecl, w);
             GenerateTrackableContainerTrackerCode(idecl, w);
+            GenerateTrackableContainerAot(idecl, w);
 
             namespaceHandle?.Dispose();
 
@@ -192,10 +193,10 @@ namespace CodeGen
                         w._($"[ProtoMember{protoMemberAttr.ArgumentList}] ");
                     var messagePackMemberAttr = p.AttributeLists.GetAttribute("KeyAttribute");
                     if (messagePackMemberAttr != null)
-                        w._($"[Key{messagePackMemberAttr.ArgumentList}] ");
+                        w._($"[MessagePack.Key{messagePackMemberAttr.ArgumentList}] ");
                     var ignoreMemberAttr = p.AttributeLists.GetAttribute("IgnoreMemberAttribute");
                     if (ignoreMemberAttr != null)
-                        w._($"[IgnoreMember]");
+                        w._($"[MessagePack.IgnoreMember]");
 
                     using (w.B($"public {propertyType} {propertyName}"))
                     {
@@ -242,10 +243,10 @@ namespace CodeGen
                         w._($"[ProtoMember{protoMemberAttr.ArgumentList}] ");
                     var messagePackMemberAttr = p.AttributeLists.GetAttribute("KeyAttribute");
                     if (messagePackMemberAttr != null)
-                        w._($"[Key{messagePackMemberAttr?.ArgumentList}] ");
+                        w._($"[MessagePack.Key{messagePackMemberAttr?.ArgumentList}] ");
                     var ignoreMemberAttr = p.AttributeLists.GetAttribute("IgnoreMemberAttribute");
                     if (ignoreMemberAttr != null)
-                        w._($"[IgnoreMember]");
+                        w._($"[MessagePack.IgnoreMember]");
 
                     var propertyName = p.Identifier.ToString();
                     var trackerName = Utility.GetTrackerClassName(p.Type);
@@ -390,6 +391,32 @@ namespace CodeGen
                         w._($"if ({propertyName}Tracker != null)",
                             $"    {propertyName}Tracker.RollbackTo(tracker.{propertyName}Tracker);");
                     }
+                }
+            }
+        }
+
+        private void GenerateTrackableContainerAot(InterfaceDeclarationSyntax idecl, CodeWriter.CodeWriter w)
+        {
+            if (Utility.IsMessagePackObject(idecl.AttributeLists) == false)
+                return;
+
+            var typeName = idecl.GetTypeName();
+            var className = "Trackable" + typeName.Substring(1) + "Tracker";
+            using (w.B($"public static class {className}AotWorkaround"))
+            {
+                using (w.B($"public static void TryAotWorkaround()"))
+                {
+                    using (w.b($"var aotLists = new List<object>"))
+                    {
+                        var properties = idecl.GetProperties();
+                        foreach (var p in properties)
+                        {
+                            var propertyName = p.Identifier.ToString();
+                            var trackerName = Utility.GetMessagePackAot(p.Type);
+                            w._($"{trackerName}");
+                        }
+                    }
+                    w.Write(";");
                 }
             }
         }

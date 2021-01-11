@@ -3,33 +3,33 @@ using MessagePack.Formatters;
 
 namespace TrackableData.MessagePack
 {
-    public class TrackableDictionaryTrackerInterfaceMessagePackConverter<TKey, TValue> : IMessagePackFormatter<IDictionaryTracker<TKey, TValue>>
+    public class TrackableDictionaryTrackerInterfaceMessagePackFormatter<TKey, TValue> : IMessagePackFormatter<IDictionaryTracker<TKey, TValue>>
     {
         public void Serialize(ref MessagePackWriter writer, IDictionaryTracker<TKey, TValue> value, MessagePackSerializerOptions options)
         {
-            TrackableDictionaryTrackerMessagePackConverter<TKey, TValue>.Serialize(ref writer, (TrackableDictionaryTracker<TKey, TValue>)value, options);
+            TrackableDictionaryTrackerMessagePackFormatter<TKey, TValue>.Serialize(ref writer, (TrackableDictionaryTracker<TKey, TValue>)value, options);
         }
 
         public IDictionaryTracker<TKey, TValue> Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
-            return TrackableDictionaryTrackerMessagePackConverter<TKey, TValue>.Deserialize(ref reader, options);
+            return TrackableDictionaryTrackerMessagePackFormatter<TKey, TValue>.Deserialize(ref reader, options);
         }
     }
 
-    public class TrackableDictionaryTrackerClassMessagePackConverter<TKey, TValue> : IMessagePackFormatter<TrackableDictionaryTracker<TKey, TValue>>
+    public class TrackableDictionaryTrackerClassMessagePackFormatter<TKey, TValue> : IMessagePackFormatter<TrackableDictionaryTracker<TKey, TValue>>
     {
         public void Serialize(ref MessagePackWriter writer, TrackableDictionaryTracker<TKey, TValue> value, MessagePackSerializerOptions options)
         {
-            TrackableDictionaryTrackerMessagePackConverter<TKey, TValue>.Serialize(ref writer, value, options);
+            TrackableDictionaryTrackerMessagePackFormatter<TKey, TValue>.Serialize(ref writer, value, options);
         }
 
         public TrackableDictionaryTracker<TKey, TValue> Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
-            return TrackableDictionaryTrackerMessagePackConverter<TKey, TValue>.Deserialize(ref reader, options);
+            return TrackableDictionaryTrackerMessagePackFormatter<TKey, TValue>.Deserialize(ref reader, options);
         }
     }
 
-    public class TrackableDictionaryTrackerMessagePackConverter<TKey, TValue>
+    public class TrackableDictionaryTrackerMessagePackFormatter<TKey, TValue>
     {
         public static void Serialize(ref MessagePackWriter writer, TrackableDictionaryTracker<TKey, TValue> value,
             MessagePackSerializerOptions options)

@@ -41,7 +41,7 @@ let copyright = "Copyright © 2019 tteogi"
 let authors = [ "TenY" ]
 let owner = "TenY"
 let solutionFile = "CodeWriter"
-let nugetVersion = "1.0.15"
+let nugetVersion = "1.0.17"
 let gitHome = "https://github.com/tteogi"
 let gitName = "TrackableData"
 let projectUrl = sprintf "%s/%s" gitHome gitName
@@ -62,6 +62,7 @@ Target.create "Pack" (fun _ ->
         let args =
             let defaultArgs = MSBuild.CliArguments.Create()
             { defaultArgs with
+                  DisableInternalBinLog = true
                   Properties =
                       [ "Title", project
                         "PackageVersion", nugetVersion

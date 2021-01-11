@@ -177,10 +177,10 @@ namespace CodeGen
                         w._($"[ProtoMember{protoMemberAttr?.ArgumentList}]");
                     var messagePackMemberAttr = p.AttributeLists.GetAttribute("KeyAttribute");
                     if (messagePackMemberAttr != null)
-                        w._($"[Key{messagePackMemberAttr?.ArgumentList}]");
+                        w._($"[MessagePack.Key{messagePackMemberAttr?.ArgumentList}]");
                     var ignoreMemberAttr = p.AttributeLists.GetAttribute("IgnoreMemberAttribute");
                     if (ignoreMemberAttr != null)
-                        w._($"[IgnoreMember]");
+                        w._($"[MessagePack.IgnoreMember]");
 
                     using (w.B($"public {propertyType} {propertyName}"))
                     {

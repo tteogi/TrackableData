@@ -37,13 +37,13 @@ namespace TrackableData.MessagePack
                 {
                     if (typeof(IDictionaryTracker<,>).MakeGenericType(arguments) == type)
                     {
-                        var trackerType = typeof(TrackableDictionaryTrackerInterfaceMessagePackConverter<,>)
+                        var trackerType = typeof(TrackableDictionaryTrackerInterfaceMessagePackFormatter<,>)
                             .MakeGenericType(arguments);
                         formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
                     }
                     else if (typeof(TrackableDictionaryTracker<,>).MakeGenericType(arguments) == type)
                     {
-                        var trackerType = typeof(TrackableDictionaryTrackerClassMessagePackConverter<,>)
+                        var trackerType = typeof(TrackableDictionaryTrackerClassMessagePackFormatter<,>)
                             .MakeGenericType(arguments);
                         formatter = (IMessagePackFormatter<T>) Activator.CreateInstance(trackerType);
                     }

@@ -17,7 +17,7 @@ namespace CodeGen
         {
             public string TypeString()
             {
-                return "[MessagePackObject]";
+                return "[MessagePack.MessagePackObject]";
             }
         }
 
@@ -47,8 +47,8 @@ namespace CodeGen
         public void WriteIgnore(CodeWriter.CodeWriter writer)
         {
             var serializeType = _serializes.Find((type => type is MessagePack));
-            if(serializeType != null)
-                writer.Write("[IgnoreMember]");
+            if (serializeType != null)
+                writer.Write("[MessagePack.IgnoreMember]");
             writer.Write("[IgnoreDataMember]");
         }
     }
@@ -82,17 +82,17 @@ namespace CodeGen
                 }
             }
             else if (CodeAnalaysisExtensions.CompareTypeName(genericType.Identifier.ToString(),
-                                                             "TrackableData.TrackableDictionary"))
+                "TrackableData.TrackableDictionary"))
             {
                 return $"TrackableDictionaryTracker{genericType.TypeArgumentList}";
             }
             else if (CodeAnalaysisExtensions.CompareTypeName(genericType.Identifier.ToString(),
-                                                             "TrackableData.TrackableSet"))
+                "TrackableData.TrackableSet"))
             {
                 return $"TrackableSetTracker{genericType.TypeArgumentList}";
             }
             else if (CodeAnalaysisExtensions.CompareTypeName(genericType.Identifier.ToString(),
-                                                             "TrackableData.TrackableList"))
+                "TrackableData.TrackableList"))
             {
                 return $"TrackableListTracker{genericType.TypeArgumentList}";
             }
@@ -111,6 +111,48 @@ namespace CodeGen
             if (useMessagePack)
                 serializes.Add(new ClassSerializeType.MessagePack());
             return new ClassSerializeType(serializes);
+        }
+
+        public static bool IsMessagePackObject(SyntaxList<AttributeListSyntax> attributes)
+        {
+            return attributes.GetAttribute("UnionAttribute") != null;
+        }
+
+        public static string GetMessagePackAot(TypeSyntax type)
+        {
+            // NOTE: it's naive approach because we don't know semantic type information here.
+            var genericType = type as GenericNameSyntax;
+            if (genericType == null)
+            {
+                if (type.ToString().StartsWith("Trackable"))
+                {
+                    return $"new TrackableData.MessagePack.TrackablePocoTrackerClassMessagePackFormatter<I{type.ToString().Substring(9)}>()," +
+                           $"new TrackableData.MessagePack.TrackablePocoTrackerInterfaceMessagePackFormatter<I{type.ToString().Substring(9)}>(),";
+                }
+            }
+            else if (CodeAnalaysisExtensions.CompareTypeName(genericType.Identifier.ToString(),
+                "TrackableData.TrackableDictionary"))
+            {
+                return $"new TrackableData.MessagePack.TrackableDictionaryTrackerInterfaceMessagePackFormatter{genericType.TypeArgumentList}()," +
+                       $"new TrackableData.MessagePack.TrackableDictionaryTrackerClassMessagePackFormatter{genericType.TypeArgumentList}()," +
+                       $"new TrackableData.MessagePack.TrackableDictionaryMessagePackFormatter{genericType.TypeArgumentList}(),";
+            }
+            else if (CodeAnalaysisExtensions.CompareTypeName(genericType.Identifier.ToString(),
+                "TrackableData.TrackableSet"))
+            {
+                return $"new TrackableData.MessagePack.TrackableSetTrackerInterfaceMessagePackFormatter{genericType.TypeArgumentList}()," +
+                       $"new TrackableData.MessagePack.TrackableSetTrackerClassMessagePackFormatter{genericType.TypeArgumentList}()," +
+                       $"new TrackableData.MessagePack.TrackableSetMessagePackFormatter{genericType.TypeArgumentList}(),";
+            }
+            else if (CodeAnalaysisExtensions.CompareTypeName(genericType.Identifier.ToString(),
+                "TrackableData.TrackableList"))
+            {
+                return $"new TrackableData.MessagePack.TrackableListTrackerInterfaceMessagePackFormatter{genericType.TypeArgumentList}()," +
+                       $"new TrackableData.MessagePack.TrackableListTrackerClassMessagePackFormatter{genericType.TypeArgumentList}()," +
+                       $"new TrackableData.MessagePack.TrackableListMessagePackFormatter{genericType.TypeArgumentList}(),\n";
+            }
+
+            throw new Exception("Cannot resolve tracker class of " + type);
         }
     }
 }

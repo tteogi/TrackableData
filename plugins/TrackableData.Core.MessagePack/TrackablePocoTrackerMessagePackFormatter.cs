@@ -44,7 +44,7 @@ namespace TrackableData.MessagePack
             writer.WriteArrayHeader(tracker.ChangeMap.Count);
             foreach (var item in tracker.ChangeMap)
             {
-                MessagePackSerializer.Serialize(ref writer, item.Value.NewValue, options);
+                MessagePackSerializer.Serialize(item.Value.NewValue.GetType(), ref writer, item.Value.NewValue, options);
             }
         }
 
