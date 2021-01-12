@@ -26,17 +26,12 @@ namespace TrackableData.Json.Tests
             return dict;
         }
 
-        private MessagePackSerializerOptions GetMessagePackOption()
-        {
-            return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
-        }
-
         [Fact]
         public void Test_Dictionary_Serialize_Work()
         {
             var dict = CreateTestDictionaryWithTracker();
-            var data = MessagePackSerializer.Serialize(dict, GetMessagePackOption());
-            var dict2 = MessagePackSerializer.Deserialize<TrackableDictionary<int, string>>(data, GetMessagePackOption());
+            var data = MessagePackSerializer.Serialize(dict, TestResolver.GetMessagePackOption());
+            var dict2 = MessagePackSerializer.Deserialize<TrackableDictionary<int, string>>(data, TestResolver.GetMessagePackOption());
             Assert.Equal(dict.Count, dict2.Count);
         }
 
@@ -48,8 +43,8 @@ namespace TrackableData.Json.Tests
             dict.Remove(2);
             dict[4] = "FourAdded";
 
-            var data = MessagePackSerializer.Serialize(dict.Tracker, GetMessagePackOption());
-            var tracker2 = MessagePackSerializer.Deserialize<TrackableDictionaryTracker<int, string>>(data, GetMessagePackOption());
+            var data = MessagePackSerializer.Serialize(dict.Tracker, TestResolver.GetMessagePackOption());
+            var tracker2 = MessagePackSerializer.Deserialize<TrackableDictionaryTracker<int, string>>(data, TestResolver.GetMessagePackOption());
 
             var dict2 = CreateTestDictionary();
             tracker2.ApplyTo(dict2);

@@ -36,11 +36,6 @@ namespace TrackableData.Json.Tests
             };
         }
 
-        private MessagePackSerializerOptions GetMessagePackOption()
-        {
-            return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
-        }
-
         private TrackableDataContainer CreateTestContainerWithTracker()
         {
             var container = CreateTestContainer();
@@ -53,8 +48,8 @@ namespace TrackableData.Json.Tests
         public void Test_Container_Serialize_Work()
         {
             var c = CreateTestContainerWithTracker();
-            var data = MessagePackSerializer.Serialize(c, GetMessagePackOption());
-            var c2 = MessagePackSerializer.Deserialize<TrackableDataContainer>(data, GetMessagePackOption());
+            var data = MessagePackSerializer.Serialize(c, TestResolver.GetMessagePackOption());
+            var c2 = MessagePackSerializer.Deserialize<TrackableDataContainer>(data, TestResolver.GetMessagePackOption());
             Assert.Equal(c.Dictionary.Count, c2.Dictionary.Count);
             Assert.Equal(c.List.Count, c2.List.Count);
         }
@@ -84,8 +79,8 @@ namespace TrackableData.Json.Tests
 
             // Assert
 
-            var data = MessagePackSerializer.Serialize(c.Tracker, GetMessagePackOption());
-            var tracker2 = MessagePackSerializer.Deserialize<TrackableDataContainerTracker>(data, GetMessagePackOption());
+            var data = MessagePackSerializer.Serialize(c.Tracker, TestResolver.GetMessagePackOption());
+            var tracker2 = MessagePackSerializer.Deserialize<TrackableDataContainerTracker>(data, TestResolver.GetMessagePackOption());
 
             var c2 = CreateTestContainer();
             tracker2.ApplyTo(c2);

@@ -25,17 +25,12 @@ namespace TrackableData.Json.Tests
             return list;
         }
 
-        private MessagePackSerializerOptions GetMessagePackOption()
-        {
-            return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
-        }
-
         [Fact]
         public void Test_List_Serialize_Work()
         {
             var list = CreateTestListWithTracker();
-            var data = MessagePackSerializer.Serialize(list, GetMessagePackOption());
-            var list2 = MessagePackSerializer.Deserialize<TrackableList<string>>(data, GetMessagePackOption());
+            var data = MessagePackSerializer.Serialize(list, TestResolver.GetMessagePackOption());
+            var list2 = MessagePackSerializer.Deserialize<TrackableList<string>>(data, TestResolver.GetMessagePackOption());
             Assert.Equal(list.Count, list2.Count);
         }
 
@@ -53,8 +48,8 @@ namespace TrackableData.Json.Tests
             list.RemoveAt(4);
             list.Insert(4, "FourAgain");
 
-            var data = MessagePackSerializer.Serialize(list.Tracker, GetMessagePackOption());
-            var tracker2= MessagePackSerializer.Deserialize<TrackableListTracker<string>>(data, GetMessagePackOption());
+            var data = MessagePackSerializer.Serialize(list.Tracker, TestResolver.GetMessagePackOption());
+            var tracker2= MessagePackSerializer.Deserialize<TrackableListTracker<string>>(data, TestResolver.GetMessagePackOption());
 
             var list2 = CreateTestList();
             tracker2.ApplyTo(list2);

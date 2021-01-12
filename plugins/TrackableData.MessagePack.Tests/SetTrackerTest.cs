@@ -20,17 +20,12 @@ namespace TrackableData.Json.Tests
             return set;
         }
 
-        private MessagePackSerializerOptions GetMessagePackOption()
-        {
-            return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
-        }
-
         [Fact]
         public void Test_Set_Serialize_Work()
         {
             var set = CreateTestSetWithTracker();
-            var serialize = MessagePackSerializer.Serialize(set, GetMessagePackOption());
-            var set2 = MessagePackSerializer.Deserialize<TrackableSet<int>>(serialize, GetMessagePackOption());
+            var serialize = MessagePackSerializer.Serialize(set, TestResolver.GetMessagePackOption());
+            var set2 = MessagePackSerializer.Deserialize<TrackableSet<int>>(serialize, TestResolver.GetMessagePackOption());
 
             Assert.Equal(set.Count, set2.Count);
         }
@@ -44,8 +39,8 @@ namespace TrackableData.Json.Tests
             set.Add(4);
             set.Add(5);
 
-            var serialize = MessagePackSerializer.Serialize(set.Tracker, GetMessagePackOption());
-            var tracker2 = MessagePackSerializer.Deserialize<TrackableSetTracker<int>>(serialize, GetMessagePackOption());
+            var serialize = MessagePackSerializer.Serialize(set.Tracker, TestResolver.GetMessagePackOption());
+            var tracker2 = MessagePackSerializer.Deserialize<TrackableSetTracker<int>>(serialize, TestResolver.GetMessagePackOption());
 
             var set2 = CreateTestSet();
             tracker2.ApplyTo(set2);

@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using MessagePack.Resolvers;
 using Newtonsoft.Json;
 using TrackableData.MessagePack;
 using Xunit;
@@ -23,18 +24,12 @@ namespace TrackableData.Json.Tests
             return person;
         }
 
-        private MessagePackSerializerOptions GetMessagePackOption()
-        {
-            return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
-        }
-
         [Fact]
         public void Test_Poco_Serialize_Work()
         {
             var person = CreateTestPersonWithTracker();
-            var serialize = MessagePackSerializer.Serialize(person, GetMessagePackOption());
-            var person2 = MessagePackSerializer.Deserialize<TrackablePerson>(serialize, GetMessagePackOption());
-            Assert.Equal(person.Name, person2.Name);
+            var serialize = MessagePackSerializer.Serialize(person, TestResolver.GetMessagePackOption());
+            var person2 = MessagePackSerializer.Deserialize<TrackablePerson>(serialize, TestResolver.GetMessagePackOption());
         }
 
         [Fact]
@@ -44,8 +39,9 @@ namespace TrackableData.Json.Tests
             person.Name = "Bob";
             person.Age = 30;
 
-            var serialize = MessagePackSerializer.Serialize(person.Tracker, GetMessagePackOption());
-            var tracker2 = MessagePackSerializer.Deserialize<TrackablePocoTracker<IPerson>>(serialize, GetMessagePackOption());
+            var serialize = MessagePackSerializer.Serialize(person.Tracker, TestResolver.GetMessagePackOption());
+            var tracker2 =
+                MessagePackSerializer.Deserialize<TrackablePocoTracker<IPerson>>(serialize, TestResolver.GetMessagePackOption());
 
             var person2 = CreateTestPerson();
             tracker2.ApplyTo(person2);
