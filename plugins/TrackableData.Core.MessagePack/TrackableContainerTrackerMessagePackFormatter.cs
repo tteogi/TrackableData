@@ -49,11 +49,6 @@ namespace TrackableData.MessagePack
             }
         }
 
-        private MessagePackSerializerOptions GetMessagePackOption()
-        {
-            return MessagePackSerializerOptions.Standard.WithResolver(new TrackableDataMessagePacketResolver());
-        }
-
         public void Serialize(ref MessagePackWriter writer, T value, MessagePackSerializerOptions options)
         {
             var properties = new List<Changed>();
@@ -77,14 +72,9 @@ namespace TrackableData.MessagePack
             foreach (var pi in properties)
             {
                 var type = pi.Value.GetType();
-                if (!_serializeMethodInfos.TryGetValue(type, out var method))
-                {
-                    method = SerializeMethodInfo.MakeGenericMethod(type);
-                    _serializeMethodInfos[type] = method;
-                }
-
-                var stream = new MemoryStream(100);
-                var data = (byte[]) method.Invoke(null, new object[] { stream, pi.Value, options});
+                var method = SerializeMethodCache.GetSerializeMethod(type);
+                var stream = new MemoryStream(10);
+                method.Invoke(null, new object[] { stream, pi.Value, options, null});
                 writer.Write(stream.ToArray());
             }
         }
@@ -106,13 +96,8 @@ namespace TrackableData.MessagePack
             {
                 var data = reader.ReadBytes();
                 var pi = objectType.GetProperty(list[i]);
-                if (!_deserializeMethodInfos.TryGetValue(pi.PropertyType, out var method))
-                {
-                    method = DeserializeMethodInfo.MakeGenericMethod(pi.PropertyType);
-                    _deserializeMethodInfos[pi.PropertyType] = method;
-                }
-
-                var value = method.Invoke(null, new object[] {data.Value, GetMessagePackOption()});
+                var method = SerializeMethodCache.GetDeserializeMethod(pi.PropertyType);
+                var value = method.Invoke(null, new object[] {data.Value, options, null});
                 pi.SetValue(tracker, value, null);
             }
 
