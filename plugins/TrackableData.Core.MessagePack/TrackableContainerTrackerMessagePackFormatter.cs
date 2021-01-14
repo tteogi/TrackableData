@@ -68,14 +68,20 @@ namespace TrackableData.MessagePack
                 writer.Write(pi.PropertyName);
             }
 
-            writer.WriteArrayHeader(properties.Count);
             foreach (var pi in properties)
             {
-                var type = pi.Value.GetType();
-                var method = SerializeMethodCache.GetSerializeMethod(type);
-                var stream = new MemoryStream(10);
-                method.Invoke(null, new object[] { stream, pi.Value, options, null});
-                writer.Write(stream.ToArray());
+                if (pi.Value == null)
+                {
+                    writer.WriteNil();
+                }
+                else
+                {
+                    var type = pi.Value.GetType();
+                    var method = SerializeMethodCache.GetSerializeMethod(type);
+                    var stream = new MemoryStream(10);
+                    method.Invoke(null, new object[] { stream, pi.Value, options, null});
+                    writer.Write(stream.ToArray());
+                }
             }
         }
 
@@ -91,16 +97,21 @@ namespace TrackableData.MessagePack
                 list.Add(reader.ReadString());
             }
 
-            length = reader.ReadArrayHeader();
             for (var i = 0; i < length; i++)
             {
-                var data = reader.ReadBytes();
                 var pi = objectType.GetProperty(list[i]);
-                var method = SerializeMethodCache.GetDeserializeMethod(pi.PropertyType);
-                var value = method.Invoke(null, new object[] {data.Value, options, null});
-                pi.SetValue(tracker, value, null);
+                if (reader.TryReadNil())
+                {
+                    pi.SetValue(tracker, null, null);
+                }
+                else
+                {
+                    var data = reader.ReadBytes();
+                    var method = SerializeMethodCache.GetDeserializeMethod(pi.PropertyType);
+                    var value = method.Invoke(null, new object[] {data.Value, options, null});
+                    pi.SetValue(tracker, value, null);
+                }
             }
-
 
             return tracker;
         }

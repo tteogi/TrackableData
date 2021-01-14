@@ -46,13 +46,19 @@ namespace TrackableData.MessagePack
 				writer.Write(item.Key.Name);
 			}
 
-			writer.WriteArrayHeader(tracker.ChangeMap.Count);
 			foreach (var item in tracker.ChangeMap)
 			{
-				var method = SerializeMethodCache.GetSerializeMethod(item.Value.NewValue.GetType());
-				var stream = new MemoryStream(10);
-                method.Invoke(null, new object[] { stream, item.Value.NewValue, options, null});
-                writer.Write(stream.ToArray());
+				if (item.Value.NewValue == null)
+				{
+					writer.WriteNil();
+				}
+				else
+				{
+					var method = SerializeMethodCache.GetSerializeMethod(item.Value.NewValue.GetType());
+					var stream = new MemoryStream(10);
+					method.Invoke(null, new object[] {stream, item.Value.NewValue, options, null});
+					writer.Write(stream.ToArray());
+				}
 			}
 		}
 
@@ -68,14 +74,20 @@ namespace TrackableData.MessagePack
 			}
 
 			var objectType = typeof(T);
-			length = reader.ReadArrayHeader();
 			for (var i = 0; i < length; i++)
 			{
-				var data = reader.ReadBytes();
 				var pi = objectType.GetProperty(list[i]);
-				var method = SerializeMethodCache.GetDeserializeMethod(pi.PropertyType);
-				var value = method.Invoke(null, new object[] {data.Value, options, null});
-				tracker.TrackSet(pi, null, value);
+				if (reader.TryReadNil())
+				{
+					tracker.TrackSet(pi, null, null);
+				}
+				else
+				{
+					var data = reader.ReadBytes();
+					var method = SerializeMethodCache.GetDeserializeMethod(pi.PropertyType);
+					var value = method.Invoke(null, new object[] {data.Value, options, null});
+					tracker.TrackSet(pi, null, value);
+				}
 			}
 
 			return tracker;
